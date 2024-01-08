@@ -18,10 +18,10 @@ jobs:
 
       - name: Debug AWS Credentials
         run: |
-          echo "AWS_ACCESS_KEY_ID: $TF_VAR_AWS_ACCESS_KEY_ID"
-          echo "AWS_SECRET_ACCESS_KEY: $TF_VAR_AWS_SECRET_ACCESS_KEY"
-          echo "AWS_SESSION_TOKEN: $TF_VAR_AWS_SESSION_TOKEN"
-          echo "AWS_REGION: $TF_VAR_AWS_REGION"
+          echo "AWS_ACCESS_KEY_ID: ${secrets.TF_VAR_AWS_ACCESS_KEY_ID}"
+          echo "AWS_SECRET_ACCESS_KEY: ${secrets.TF_VAR_AWS_SECRET_ACCESS_KEY}"
+          echo "AWS_SESSION_TOKEN: ${secrets.TF_VAR_AWS_SESSION_TOKEN}"
+          echo "AWS_REGION: ${secrets.TF_VAR_AWS_REGION}"
 
       - name: Build and Push Frontend Docker Image
         uses: docker://ghcr.io/kciter/aws-ecr-action:latest
