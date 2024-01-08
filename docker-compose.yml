@@ -1,0 +1,54 @@
+## TRAEFIX - REVERSE PROXY 
+
+version: "3.7"
+services:
+  traefik:
+    image: traefik:v2.9
+    command:
+      # --api.insecure=1 : allow to use it without using a ssl certificate
+      - --api.insecure=1
+      - --entrypoints.web.address=:80
+      - --providers.docker.exposedByDefault=false
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /traefik:/etc/traefik/
+    ports:
+      - "80:80" # The HTTP port
+      - "443:443"  # The HTTPS port
+      - "8080:8080"  # reverse proxy port
+
+  frontend:
+    build:
+      context: ./containers/frontend
+    command: npm run start
+    volumes:
+      - ./containers/frontend/app:/usr/src/app
+    labels:
+      traefik.enable: "true"
+      traefik.port: 3000
+      traefik.http.services.frontend.loadbalancer.server.port: 3000
+      traefik.http.routers.frontend.rule: Host(`dev.lan`)
+    environment:
+      NODE_ENV: "development"
+      ENVIRONMENT: "dev"
+
+  api:
+    container_name: api
+    build:
+      context: ./containers/api
+    command: /start-reload.sh
+    volumes:
+      - ./containers/api/app:/app
+    labels:
+      traefik.enable: "true"
+      traefik.port: 80
+      traefik.http.services.api.loadbalancer.server.port: 80
+      traefik.http.routers.api.rule: Host(`dev.lan`) && PathPrefix(`/api`)
+    environment:
+      SECRET_KEY: "dev_secret_key"
+      DEBUG: "true"
+      ENVIRONMENT: "dev"
+# Output ECR repository URL
+# x-aws-output:
+#   ecr_repository_url:
+#     value: ${ECR_REPOSITORY_URL}
