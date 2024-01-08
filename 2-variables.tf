@@ -3,25 +3,45 @@ variable "force_image_rebuild" {
   default = false
 }
 
+variable "TF_VAR_AWS_PROFILE" {
+description = "aws user account MFA profile"
+  type = string
+  # default = "${secrets.TF_VAR_AWS_PROFILE}"
+#   sensitive = true
+}
+
+variable "TF_VAR_AWS_REGION" {
+description = "aws account region"
+  type = string
+  # default = "${secrets.TF_VAR_AWS_REGION}"
+#   sensitive = true
+}
+
+variable "TF_VAR_AWS_ACCOUNT_ID" {
+description = "aws account id"
+  type = string
+  # default = "${secrets.TF_VAR_AWS_ACCOUNT_ID}"
+#   sensitive = true
+}
 
 variable "TF_VAR_AWS_SESSION_TOKEN" {
 description = "aws sts get-session-token"
   type = string
-  default = "x"
+  # default = "${secrets.TF_VAR_AWS_SESSION_TOKEN}"
 #   sensitive = true
 }
 
 variable "TF_VAR_AWS_SECRET_ACCESS_KEY" {
 description = "aws secret access key"
   type = string
-  default = "x"
+  # default = "${secrets.TF_VAR_AWS_SECRET_ACCESS_KEY}"
 #   sensitive = true
 }
 
 variable "TF_VAR_AWS_ACCESS_KEY_ID" {
 description = "aws sts aws access key id"
   type = string
-  default = "x"
+  # default = "${secrets.TF_VAR_AWS_ACCESS_KEY_ID}"
 #   sensitive = true
 }
 

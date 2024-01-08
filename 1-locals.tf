@@ -2,22 +2,23 @@
 
 locals {
   # ... (existing locals remain unchanged)
-  aws_account = 921283598378
-  aws_region  = "us-east-1"    # AWS region
-  aws_profile = "system-admin" # AWS profile
-  alias       = "us-east-1"
+  aws_account = data.aws_caller_identity.current.account_id # var.TF_VAR_AWS_ACCOUNT_ID |
+  aws_region  = "us-east-1"  #var.TF_VAR_AWS_REGION  # AWS region
+  aws_profile = "system-admin" #var.TF_VAR_AWS_PROFILE # AWS profile
+  alias       = "us-east-1"  #var.TF_VAR_AWS_REGION
   access_key  = var.TF_VAR_AWS_ACCESS_KEY_ID
   secret_key  = var.TF_VAR_AWS_SECRET_ACCESS_KEY
   token       = var.TF_VAR_AWS_SESSION_TOKEN
 
-  ecr_reg   = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${local.aws_region}.amazonaws.com"
-  ecr_repo  = "demo"   # Default ECR repo name
+  #"${data.aws_caller_identity.current.account_id}.dkr.ecr.${local.aws_region}.amazonaws.com"
+  ecr_reg   = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${local.aws_region}.amazonaws.com" #"${locals.aws_account}.dkr.ecr.${local.aws_region}.amazonaws.com"
+  # ecr_repo  = "demo"   # Default ECR repo name
   image_tag = "latest" # Default image tag version
 
   dkr_img_src_path   = "${path.module}/containers" # Docker image path
   dkr_img_src_sha256 = sha256(join("", [for f in fileset(".", "${local.dkr_img_src_path}/**") : filebase64(f)]))
 
-  # Define a map for ECR repositories
+  # Define a map for ECR repositories, ECR repo names
   ecr_repos = {
     frontend = "frontend-repo",
     api      = "api-repo",
