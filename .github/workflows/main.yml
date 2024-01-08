@@ -8,6 +8,9 @@ jobs:
   build-and-push:
     name: Build and Push Docker Images to ECR
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
 
     steps:
       - name: Checkout code
@@ -21,7 +24,7 @@ jobs:
           account_id: ${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}
           repo: frontend-repo
           region: us-east-1
-          tags: latest,${{ github.sha }}
+          tags: latest${{ github.sha }}
           create_repo: true
           image_scanning_configuration: true
           set_repo_policy: false
@@ -35,7 +38,7 @@ jobs:
           account_id: ${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}
           repo: api-repo
           region: us-east-1
-          tags: latest,${{ github.sha }}
+          tags: latest${{ github.sha }}
           create_repo: true
           image_scanning_configuration: true
           set_repo_policy: false
@@ -44,6 +47,9 @@ jobs:
   deploy:
     name: Deploy to AWS
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
 
     steps:
       - name: Checkout code
@@ -65,7 +71,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: api-repo
-          IMAGE_TAG: latest
+          IMAGE_TAG: latest ${{ github.sha }}
         run: |
           # Additional steps for deploying API image to ECS go here
             set -e
@@ -92,7 +98,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: frontend-repo
-          IMAGE_TAG: latest
+          IMAGE_TAG: latest ${{ github.sha }}
         run: |
           # Additional steps for deploying Frontend image to ECS go here
           set -e
