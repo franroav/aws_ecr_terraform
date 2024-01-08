@@ -68,6 +68,24 @@ jobs:
           IMAGE_TAG: latest
         run: |
           # Additional steps for deploying API image to ECS go here
+            set -e
+
+            source_path="$1"
+            repository_url="$2"
+            tag="${3:-latest}"
+
+            region="$(echo "$repository_url" | cut -d. -f4)"
+            image_name="$(echo "$repository_url" | cut -d/ -f2)"
+
+            cd "$source_path"
+
+            aws ecr get-login-password --region "$region" | docker login --username AWS --password-stdin "$repository_url"
+
+            docker build -t "api-repo:$tag" .
+
+            docker tag "api-repo:$tag" "${repository_url}:${tag}"
+
+            docker push "${repository_url}:${tag}"
 
       - name: Deploy Frontend image to Amazon ECS
         env:
@@ -76,3 +94,21 @@ jobs:
           IMAGE_TAG: latest
         run: |
           # Additional steps for deploying Frontend image to ECS go here
+          set -e
+
+          source_path="$1"
+          repository_url="$2"
+          tag="${3:-latest}"
+
+          region="$(echo "$repository_url" | cut -d. -f4)"
+          image_name="$(echo "$repository_url" | cut -d/ -f2)"
+
+          cd "$source_path"
+
+          aws ecr get-login-password --region "$region" | docker login --username AWS --password-stdin "$repository_url"
+
+          docker build -t "frontend-repo:$tag" .
+
+          docker tag "frontend-repo:$tag" "${repository_url}:${tag}"
+
+          docker push "${repository_url}:${tag}"
