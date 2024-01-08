@@ -2,7 +2,7 @@
 
 locals {
   # ... (existing locals remain unchanged)
-  aws_account = data.aws_caller_identity.current.account_id # var.TF_VAR_AWS_ACCOUNT_ID |
+  aws_account = data.aws_caller_identity.current.account_id # var.TF_VAR_AWS_ACCOUNT_ID
   aws_region  = "us-east-1"  #var.TF_VAR_AWS_REGION  # AWS region
   aws_profile = "system-admin" #var.TF_VAR_AWS_PROFILE # AWS profile
   alias       = "us-east-1"  #var.TF_VAR_AWS_REGION
