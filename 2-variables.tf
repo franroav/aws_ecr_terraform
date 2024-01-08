@@ -7,12 +7,13 @@ variable "TF_VAR_AWS_PROFILE" {
 description = "aws user account MFA profile"
   type = string
   # default = "${secrets.TF_VAR_AWS_PROFILE}"
-#   sensitive = true
+  #   sensitive = true
 }
 
 variable "TF_VAR_AWS_REGION" {
 description = "aws account region"
   type = string
+  default = "us-east-1"
   # default = "${secrets.TF_VAR_AWS_REGION}"
 #   sensitive = true
 }

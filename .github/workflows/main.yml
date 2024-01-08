@@ -70,6 +70,11 @@ jobs:
           # Additional steps for deploying API image to ECS go here
             set -e
 
+            export AWS_ACCESS_KEY_ID=${{ secrets.TF_VAR_AWS_ACCESS_KEY_ID }}
+            export AWS_SECRET_ACCESS_KEY=${{ secrets.TF_VAR_AWS_SECRET_ACCESS_KEY }}
+            export AWS_SESSION_TOKEN=${{ secrets.TF_VAR_AWS_SESSION_TOKEN }}
+            export AWS_REGION=us-east-1
+
             source_path="$1"
             repository_url="$2"
             tag="${3:-latest}"
@@ -79,13 +84,9 @@ jobs:
 
             cd "$source_path"
 
-            aws ecr get-login-password --region "$region" | docker login --username AWS --password-stdin "$repository_url"
-
-            docker build -t "api-repo:$tag" .
-
-            docker tag "api-repo:$tag" "${repository_url}:${tag}"
-
-            docker push "${repository_url}:${tag}"
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
+            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./containers/api
+            docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Deploy Frontend image to Amazon ECS
         env:
@@ -96,6 +97,11 @@ jobs:
           # Additional steps for deploying Frontend image to ECS go here
           set -e
 
+          export AWS_ACCESS_KEY_ID=${{ secrets.TF_VAR_AWS_ACCESS_KEY_ID }}
+          export AWS_SECRET_ACCESS_KEY=${{ secrets.TF_VAR_AWS_SECRET_ACCESS_KEY }}
+          export AWS_SESSION_TOKEN=${{ secrets.TF_VAR_AWS_SESSION_TOKEN }}
+          export AWS_REGION=us-east-1
+
           source_path="$1"
           repository_url="$2"
           tag="${3:-latest}"
@@ -105,10 +111,8 @@ jobs:
 
           cd "$source_path"
 
-          aws ecr get-login-password --region "$region" | docker login --username AWS --password-stdin "$repository_url"
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
 
-          docker build -t "frontend-repo:$tag" .
-
-          docker tag "frontend-repo:$tag" "${repository_url}:${tag}"
-
-          docker push "${repository_url}:${tag}"
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./containers/frontend
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
