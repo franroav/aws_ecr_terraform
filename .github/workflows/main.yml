@@ -3,9 +3,9 @@ name: Deploy to ECR
 on:
   push:
     branches: [master]
-    paths:
-        - "./containers/api/*"
-        - "./containers/frontend/*"
+    # paths:
+    #     - "./containers/api/*"
+    #     - "./containers/frontend/*"
 env:
     # TF_LOG: INFO
     AWS_ACCOUNT_NUMBER: ${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}
