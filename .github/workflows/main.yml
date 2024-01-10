@@ -3,12 +3,10 @@ name: Deploy to ECR
 on:
   push:
     branches: [master]
-    # paths:
-    #     - "./containers/api/*"
-    #     - "./containers/frontend/*"
+
 env:
-    # TF_LOG: INFO
-    AWS_ACCOUNT_NUMBER: ${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}
+  AWS_ACCOUNT_NUMBER: ${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}
+
 jobs:
   build-and-push:
     name: Build and Push Docker Images to ECR
@@ -37,13 +35,20 @@ jobs:
           AWS_SESSION_TOKEN: ${{ secrets.TF_VAR_AWS_SESSION_TOKEN }}
           AWS_REGION: ${{ secrets.TF_VAR_AWS_REGION }}
 
+      - name: Assume AWS Role
+        id: assume-role
+        run: |
+          role_credentials=$(aws sts assume-role --role-arn arn:aws:iam::${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}:role/github-actions-role --role-session-name GitHubActions)
+          export AWS_ACCESS_KEY_ID=$(echo $role_credentials | jq -r .Credentials.AccessKeyId)
+          export AWS_SECRET_ACCESS_KEY=$(echo $role_credentials | jq -r .Credentials.SecretAccessKey)
+          export AWS_SESSION_TOKEN=$(echo $role_credentials | jq -r .Credentials.SessionToken)
+
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
         with:
-            mask-password: 'false'
-            role-to-assume: "arn:aws:iam::${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}:oidc-provider/token.actions.githubusercontent.com"
-            role-session-name: Session-GitHubActions
+          mask-password: "false"
+
       - name: Debug Login Output
         run: |
           echo "ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}"
@@ -88,19 +93,26 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          mask-password: 'false'
-          role-to-assume: "arn:aws:iam::${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}:oidc-provider/token.actions.githubusercontent.com"
-          role-session-name: Session-GitHubActions
+          mask-password: "false"
           aws-access-key-id: ${{ secrets.TF_VAR_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.TF_VAR_AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.TF_VAR_AWS_SESSION_TOKEN }}
           aws-region: us-east-1
 
+      - name: Assume AWS Role
+        id: assume-role
+        run: |
+          role_credentials=$(aws sts assume-role --role-arn arn:aws:iam::${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}:role/github-actions-role --role-session-name GitHubActions)
+          export AWS_ACCESS_KEY_ID=$(echo $role_credentials | jq -r .Credentials.AccessKeyId)
+          export AWS_SECRET_ACCESS_KEY=$(echo $role_credentials | jq -r .Credentials.SecretAccessKey)
+          export AWS_SESSION_TOKEN=$(echo $role_credentials | jq -r .Credentials.SessionToken)
+
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
         with:
-            mask-password: 'false'
+          mask-password: "false"
+          region: us-east-1
 
       - name: Debug Login Output
         run: |
