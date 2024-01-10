@@ -11,7 +11,7 @@ jobs:
   build-and-push:
     name: Build and Push Docker Images to ECR
     runs-on: ubuntu-latest
-# These permissions are needed to interact with GitHub's OIDC Token endpoint. New
+    # These permissions are needed to interact with GitHub's OIDC Token endpoint. New
     permissions:
       id-token: write
       contents: read
@@ -35,6 +35,15 @@ jobs:
           AWS_SESSION_TOKEN: ${{ secrets.TF_VAR_AWS_SESSION_TOKEN }}
           AWS_REGION: ${{ secrets.TF_VAR_AWS_REGION }}
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          mask-password: "false"
+          aws-access-key-id: ${{ secrets.TF_VAR_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.TF_VAR_AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.TF_VAR_AWS_SESSION_TOKEN }}
+          aws-region: us-east-1
+          
       - name: Assume AWS Role
         id: assume-role
         run: |
@@ -78,7 +87,7 @@ jobs:
   deploy:
     name: Deploy to AWS
     runs-on: ubuntu-latest
-# These permissions are needed to interact with GitHub's OIDC Token endpoint. New
+    # These permissions are needed to interact with GitHub's OIDC Token endpoint. New
     permissions:
       id-token: write
       contents: read
