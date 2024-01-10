@@ -43,7 +43,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.TF_VAR_AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.TF_VAR_AWS_SESSION_TOKEN }}
           aws-region: us-east-1
-          
+
       - name: Assume AWS Role
         id: assume-role
         run: |
@@ -86,6 +86,7 @@ jobs:
 
   deploy:
     name: Deploy to AWS
+    needs: build-and-push
     runs-on: ubuntu-latest
     # These permissions are needed to interact with GitHub's OIDC Token endpoint. New
     permissions:
