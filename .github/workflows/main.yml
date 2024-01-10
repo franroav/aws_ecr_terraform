@@ -11,7 +11,7 @@ jobs:
   build-and-push:
     name: Build and Push Docker Images to ECR
     runs-on: ubuntu-latest
-    # These permissions are needed to interact with GitHub's OIDC Token endpoint. New
+# These permissions are needed to interact with GitHub's OIDC Token endpoint. New
     permissions:
       id-token: write
       contents: read
@@ -38,10 +38,10 @@ jobs:
       - name: Assume AWS Role
         id: assume-role
         run: |
-          role_credentials=$(aws sts assume-role --role-arn arn:aws:iam::${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}:role/github-actions-role --role-session-name GitHubActions)
-          export AWS_ACCESS_KEY_ID=$(echo $role_credentials | jq -r .Credentials.AccessKeyId)
-          export AWS_SECRET_ACCESS_KEY=$(echo $role_credentials | jq -r .Credentials.SecretAccessKey)
-          export AWS_SESSION_TOKEN=$(echo $role_credentials | jq -r .Credentials.SessionToken)
+          role_credentials=$(aws sts assume-role --role-arn arn:aws:iam::${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}:role/github-actions-role --role-session-name GitHubActions | jq -r .Credentials)
+          export AWS_ACCESS_KEY_ID=$(echo $role_credentials | jq -r .AccessKeyId)
+          export AWS_SECRET_ACCESS_KEY=$(echo $role_credentials | jq -r .SecretAccessKey)
+          export AWS_SESSION_TOKEN=$(echo $role_credentials | jq -r .SessionToken)
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -78,7 +78,7 @@ jobs:
   deploy:
     name: Deploy to AWS
     runs-on: ubuntu-latest
-    # These permissions are needed to interact with GitHub's OIDC Token endpoint. New
+# These permissions are needed to interact with GitHub's OIDC Token endpoint. New
     permissions:
       id-token: write
       contents: read
@@ -102,10 +102,10 @@ jobs:
       - name: Assume AWS Role
         id: assume-role
         run: |
-          role_credentials=$(aws sts assume-role --role-arn arn:aws:iam::${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}:role/github-actions-role --role-session-name GitHubActions)
-          export AWS_ACCESS_KEY_ID=$(echo $role_credentials | jq -r .Credentials.AccessKeyId)
-          export AWS_SECRET_ACCESS_KEY=$(echo $role_credentials | jq -r .Credentials.SecretAccessKey)
-          export AWS_SESSION_TOKEN=$(echo $role_credentials | jq -r .Credentials.SessionToken)
+          role_credentials=$(aws sts assume-role --role-arn arn:aws:iam::${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}:role/github-actions-role --role-session-name GitHubActions | jq -r .Credentials)
+          export AWS_ACCESS_KEY_ID=$(echo $role_credentials | jq -r .AccessKeyId)
+          export AWS_SECRET_ACCESS_KEY=$(echo $role_credentials | jq -r .SecretAccessKey)
+          export AWS_SESSION_TOKEN=$(echo $role_credentials | jq -r .SessionToken)
 
       - name: Login to Amazon ECR
         id: login-ecr
