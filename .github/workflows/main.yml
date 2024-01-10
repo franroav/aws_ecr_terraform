@@ -42,7 +42,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
         with:
             mask-password: 'false'
-            role-to-assume: arn:aws:iam::${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}:role/github-actions-role
+            role-to-assume: "arn:aws:iam::${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}:oidc-provider/token.actions.githubusercontent.com"
             role-session-name: Session-GitHubActions
       - name: Debug Login Output
         run: |
@@ -89,7 +89,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           mask-password: 'false'
-          role-to-assume: arn:aws:iam::${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}:role/github-actions-role
+          role-to-assume: "arn:aws:iam::${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}:oidc-provider/token.actions.githubusercontent.com"
           role-session-name: Session-GitHubActions
           aws-access-key-id: ${{ secrets.TF_VAR_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.TF_VAR_AWS_SECRET_ACCESS_KEY }}

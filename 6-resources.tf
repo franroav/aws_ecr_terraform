@@ -3,7 +3,7 @@
 # CREATE REPOSITORIES
 
 resource "aws_ecr_repository" "ecr_repos" {
-  
+
   for_each = local.ecr_repos
 
   name                 = each.value
@@ -23,6 +23,8 @@ resource "aws_ecr_repository" "ecr_repos" {
   }
 }
 
+#CREATE IMAGES
+# Creates images from Dockerfiles on containers folder
 
 # local-exec for build and push of docker image
 resource "null_resource" "build_push_dkr_img" {
@@ -47,7 +49,107 @@ resource "null_resource" "build_push_dkr_img" {
 }
 
 
+# AWS OpenID Policy Resources
 
+resource "aws_iam_openid_connect_provider" "github_actions" {
+  client_id_list   = ["https://github.com/franroav"]  # Replace with your desired client IDs
+  thumbprint_list  = ["3EA80E902FC385F36BC08193FBC678202D572994"] # Replace with your desired thumbprints
+  url              = "https://token.actions.githubusercontent.com"  # Replace with your desired URL
+}
+
+# Create IAM OIDC Identity Provider
+
+resource "aws_iam_role" "ecrpush" {
+  count = var.is_create_github_oidc && var.is_create_ecrpush_oicd_role ? 1 : 0
+
+  name                  = local.ecrpush_role_name
+  path                  = var.iam_role_path
+  max_session_duration  = var.max_session_duration
+  description           = "IAM Role to be assumed by GitHub Action"
+  force_detach_policies = var.force_detach_policies
+  permissions_boundary  = var.iam_role_permissions_boundary
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      for repo_name, repo_path in local.ecr_repos : {
+        Action   = "sts:AssumeRoleWithWebIdentity",
+        Effect   = "Allow",
+        Principal = {
+          Federated = local.oidc_provider_arn,
+        },
+        Condition = {
+          StringEquals = {
+            "${local.plain_oidc_url}:sub"           = "repo:${repo_name}",
+            "aws:PrincipalArn"                       = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/francisco",
+          },
+        },
+      }
+    ],
+  })
+
+  tags = merge(local.tags, { "Name" : local.ecrpush_role_name })
+}
+
+/* -------------------------------------------------------------------------- */
+/*                             AWS_IAM_ROLE_POLICY                            */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/*                       AWS_IAM_ROLE_POLICY_ATTACHMENT                       */
+/* -------------------------------------------------------------------------- */
+resource "aws_iam_role_policy_attachment" "ecr_poweruser" {
+  count = var.is_create_github_oidc && var.is_create_ecrpush_oicd_role ? 1 : 0
+
+  role       = aws_iam_role.ecrpush[0].name
+  policy_arn = var.ecr_poweruser_policy_arn
+}
+
+# resource "aws_identity_provider" "github_oidc" {
+#   name                   = "GitHubActionsOIDC"
+#   url                    = "https://token.actions.githubusercontent.com"
+#   client_id_list         = ["sigstore"]
+#   thumbprint_list        = ["a031c46782e6e6c662c2c87c76da9aa62ccabd8e"]
+#   provider_details       = {
+#     clientSecret = "your-client-secret"
+#   }
+# }
+
+# # Create IAM OIDC Policy
+# resource "aws_iam_policy" "github_oidc_policy" {
+#   name        = "GitHubOIDCPolicy"
+#   description = "Policy for GitHub OIDC authentication"
+
+#   policy = jsonencode({
+#     Version = "2012-10-17",
+#     Statement = [
+#       {
+#         Action   = "sts:AssumeRoleWithWebIdentity",
+#         Effect   = "Allow",
+#         Principal = {
+#           Federated = aws_identity_provider.github_oidc.arn,
+#         },
+#         Condition = {
+#           StringEquals = {
+#             "${aws_identity_provider.github_oidc.name}:sub" = "repo:${github.repository}",
+#             "aws:PrincipalArn" = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/francisco",
+#           },
+#         },
+#       },
+#     ],
+#   })
+# }
+
+# # Create IAM Role
+# resource "aws_iam_role" "github_oidc_role" {
+#   name               = "GitHubOIDCRole"
+#   assume_role_policy = aws_iam_policy.github_oidc_policy.json
+# }
+
+# # Attach the IAM Policy to the IAM Role
+# resource "aws_iam_role_policy_attachment" "github_oidc_attachment" {
+#   policy_arn = aws_iam_policy.github_oidc_policy.arn
+#   role       = aws_iam_role.github_oidc_role.name
+# }
 
 
 

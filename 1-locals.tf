@@ -1,4 +1,7 @@
 
+/* -------------------------------------------------------------------------- */
+/*                                   LOCALS                                   */
+/* -------------------------------------------------------------------------- */
 
 locals {
   # ... (existing locals remain unchanged)
@@ -29,19 +32,35 @@ locals {
     for repo_name, repo_path in local.ecr_repos : repo_name => repo_path
   }
 
-  dkr_build_cmds = [for repo_name, repo_path in local.build_commands : <<-EOT
-    cd ${local.dkr_img_src_path}/${repo_name}
+  securityscan_role_name = format("securityscan-%s", var.role_name_suffix)
+  ecrpush_role_name     = format("ecrpush-%s", var.role_name_suffix)
+  custom_role_name      = format("custom-%s", var.role_name_suffix)
+  
+  github_organizations = [for repo in local.ecr_repos : split("/", repo)[0]]
+  oidc_provider_arn = aws_iam_openid_connect_provider.github_actions.arn
+  plain_oidc_url    = trimprefix(var.github_actions_oidc_url, "https://")
 
-    aws ecr get-login-password --region ${local.aws_region} | docker login --username AWS --password-stdin ${data.aws_caller_identity.current.account_id}.dkr.ecr.${local.aws_region}.amazonaws.com
+  tags = merge(
+    {
+      Terraform   = true
+      Environment = "development" # You may set a default value or remove this line if not needed
+    },
+    var.tags
+  )
+
+  # dkr_build_cmds = [for repo_name, repo_path in local.build_commands : <<-EOT
+  #   cd ${local.dkr_img_src_path}/${repo_name}
+
+  #   aws ecr get-login-password --region ${local.aws_region} | docker login --username AWS --password-stdin ${data.aws_caller_identity.current.account_id}.dkr.ecr.${local.aws_region}.amazonaws.com
     
-    docker build -t ${repo_name}-repo:${local.image_tag} .
+  #   docker build -t ${repo_name}-repo:${local.image_tag} .
 
-    docker tag ${repo_name}-repo:${local.image_tag} ${data.aws_caller_identity.current.account_id}.dkr.ecr.${local.aws_region}.amazonaws.com/${repo_name}-repo:${local.image_tag}
+  #   docker tag ${repo_name}-repo:${local.image_tag} ${data.aws_caller_identity.current.account_id}.dkr.ecr.${local.aws_region}.amazonaws.com/${repo_name}-repo:${local.image_tag}
 
-    docker push ${data.aws_caller_identity.current.account_id}.dkr.ecr.${local.aws_region}.amazonaws.com/${repo_name}-repo:${local.image_tag}
+  #   docker push ${data.aws_caller_identity.current.account_id}.dkr.ecr.${local.aws_region}.amazonaws.com/${repo_name}-repo:${local.image_tag}
 
-  EOT
-  ]
+  # EOT
+  # ]
 
 #   dkr_build_cmds = {
 #   for repo_name, repo_path in local.ecr_repos : repo_name => <<-EOT

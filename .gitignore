@@ -35,3 +35,5 @@ terraform.rc
 
 
 .terraform/providers/registry.terraform.io/
+
+.terraform/providers/registry.terraform.io
