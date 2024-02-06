@@ -4,6 +4,18 @@ data "aws_caller_identity" "current" {}
 # ecr auth token 
 data "aws_ecr_authorization_token" "token" {}
 
+### External cli kubergrunt
+data "aws_region" "current" {}
+
+data "tls_certificate" "github_actions_oidc_endpoint" {
+  url = var.github_actions_oidc_url
+}
+
+
+# data "external" "thumbprint" {
+#   program = ["${path.module}/get_thumbprint.sh", data.aws_region.current.name]
+# }
+
 # github actions repository 
 # data "github_actions_repository" "current" {}
 
@@ -13,9 +25,9 @@ data "aws_ecr_authorization_token" "token" {}
 # }
 
 
-data "tls_certificate" "github_actions_oidc_endpoint" {
-  url = var.github_actions_oidc_url
-}
+# data "tls_certificate" "github_actions_oidc_endpoint" {
+#   url = var.github_actions_oidc_url
+# }
 
 # data "aws_iam_openid_connect_provider" "github_actions" {
 #   url = "https://token.actions.githubusercontent.com"

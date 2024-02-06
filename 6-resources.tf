@@ -36,7 +36,7 @@ resource "null_resource" "build_push_dkr_img" {
 
   provisioner "local-exec" {
     command = <<-EOT
-      bash "${path.module}/push.sh" \
+      bash "${path.module}/scripts/env/production/push.sh" \
         "${local.dkr_img_src_path}/${each.key}" \
         "${local.ecr_reg}/${each.value.name}" \
         "${local.image_tag}"
@@ -49,12 +49,12 @@ resource "null_resource" "build_push_dkr_img" {
 }
 
 
-# AWS OpenID Policy Resources
+# Github OpenID TLS certificate Configuration && AWS OpenID Policy Resources
 
 resource "aws_iam_openid_connect_provider" "github_actions" {
-  client_id_list   = ["https://github.com/franroav"]  # Replace with your desired client IDs
-  thumbprint_list  = ["3EA80E902FC385F36BC08193FBC678202D572994"] # Replace with your desired thumbprints
-  url              = "https://token.actions.githubusercontent.com"  # Replace with your desired URL
+  client_id_list   = [local.github_client_id]  # Add or Replace with your desired client IDs
+  thumbprint_list  = [local.github_thumbprint] # Add or Replace with your desired thumbprints - GitHub OpenID TLS certificate thumbprint
+  url              = local.url_workflow_provider  # Replace with your desired URL
 }
 
 # Create IAM OIDC Identity Provider
@@ -104,15 +104,7 @@ resource "aws_iam_role_policy_attachment" "ecr_poweruser" {
   policy_arn = var.ecr_poweruser_policy_arn
 }
 
-# resource "aws_identity_provider" "github_oidc" {
-#   name                   = "GitHubActionsOIDC"
-#   url                    = "https://token.actions.githubusercontent.com"
-#   client_id_list         = ["sigstore"]
-#   thumbprint_list        = ["a031c46782e6e6c662c2c87c76da9aa62ccabd8e"]
-#   provider_details       = {
-#     clientSecret = "your-client-secret"
-#   }
-# }
+
 
 # # Create IAM OIDC Policy
 # resource "aws_iam_policy" "github_oidc_policy" {

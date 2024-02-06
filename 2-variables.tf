@@ -1,3 +1,20 @@
+variable "username" {
+  description = "username"
+  default = "franroav"
+}
+
+variable "repository_provider" {
+  description = "github"
+  default = "https://github.com"
+  
+}
+
+variable "workflow_provider" {
+  description = "github workflow token"
+  default = "https://token.actions.githubusercontent.com"
+  
+}
+
 variable "force_image_rebuild" {
   type    = bool
   default = false
@@ -6,6 +23,7 @@ variable "force_image_rebuild" {
 variable "TF_VAR_AWS_PROFILE" {
 description = "aws user account MFA profile"
   type = string
+  default = "system-admin"
   # default = "${secrets.TF_VAR_AWS_PROFILE}"
   #   sensitive = true
 }
@@ -130,11 +148,11 @@ variable "github_actions_oidc_url" {
 #   }
 # }
 
-variable "github_thumbprint" {
-  default     = "6938fd4d98bab03faadb97b34396831e3780aea1"
-  description = "GitHub OpenID TLS certificate thumbprint."
-  type        = string
-}
+# variable "github_thumbprint" {
+#   # default     = "6938fd4d98bab03faadb97b34396831e3780aea1"
+#   description = "GitHub OpenID TLS certificate thumbprint."
+#   type        = string
+# }
 
 /* -------------------------------------------------------------------------- */
 /*                            SHARED_ROLE_VARIABLES                           */

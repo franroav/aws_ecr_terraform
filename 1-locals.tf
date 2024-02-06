@@ -4,7 +4,7 @@
 /* -------------------------------------------------------------------------- */
 
 locals {
-  # ... (existing locals remain unchanged)
+  # MAIN CONFIGURATION - ... (existing locals remain unchanged)
   aws_account = data.aws_caller_identity.current.account_id # var.TF_VAR_AWS_ACCOUNT_ID
   aws_region  = "us-east-1"  #var.TF_VAR_AWS_REGION  # AWS region
   aws_profile = "system-admin" #var.TF_VAR_AWS_PROFILE # AWS profile
@@ -13,7 +13,13 @@ locals {
   secret_key  = var.TF_VAR_AWS_SECRET_ACCESS_KEY
   token       = var.TF_VAR_AWS_SESSION_TOKEN
 
-  #"${data.aws_caller_identity.current.account_id}.dkr.ecr.${local.aws_region}.amazonaws.com"
+
+  # OpenId configuration
+  github_client_id = "${var.repository_provider}/${var.username}" # Replace with your desired client IDs
+  github_thumbprint = "${data.tls_certificate.github_actions_oidc_endpoint.certificates.0.sha1_fingerprint}" #var.github_thumbprint
+  url_workflow_provider = var.workflow_provider
+
+  # ECR configuration
   ecr_reg   = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${local.aws_region}.amazonaws.com" #"${locals.aws_account}.dkr.ecr.${local.aws_region}.amazonaws.com"
   # ecr_repo  = "demo"   # Default ECR repo name
   image_tag = "latest" # Default image tag version
@@ -28,15 +34,12 @@ locals {
     # Add more services as needed
   }
 
-  build_commands = {
-    for repo_name, repo_path in local.ecr_repos : repo_name => repo_path
-  }
-
-  securityscan_role_name = format("securityscan-%s", var.role_name_suffix)
+  # ECR ROLE configuration
+  securityscan_role_name = format("securityscan-%s", var.role_name_suffix) # not in use - optionally
   ecrpush_role_name     = format("ecrpush-%s", var.role_name_suffix)
   custom_role_name      = format("custom-%s", var.role_name_suffix)
   
-  github_organizations = [for repo in local.ecr_repos : split("/", repo)[0]]
+  # OPEN ID configuration
   oidc_provider_arn = aws_iam_openid_connect_provider.github_actions.arn
   plain_oidc_url    = trimprefix(var.github_actions_oidc_url, "https://")
 
