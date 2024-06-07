@@ -1,15 +1,13 @@
-FROM node:16-alpine
+FROM node:20-alpine
 
-ARG YARN_RUN_BUILD=YARN_RUN_BUILD
-ARG YARN_INSTALL=YARN_INSTALL
-ARG NPM_RUN_START=NPM_RUN_START
+WORKDIR /app
 
-WORKDIR /usr/src/app
+COPY package*.json .
 
-COPY ./app ./
+RUN npm install
 
-RUN yarn install
+COPY . .
 
-CMD npm run start
+EXPOSE 5173
 
-EXPOSE 3000
+CMD [ "npm","run","dev" ]

@@ -1,37 +1,68 @@
-# FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
+FROM node:12.4.0-alpine as debug
 
-# WORKDIR /app/
+WORKDIR /work/
 
-# # Install Poetry
-# RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=/opt/poetry python && \
-#     cd /usr/local/bin && \
-#     ln -s /opt/poetry/bin/poetry && \
-#     poetry config virtualenvs.create false
+COPY ./src/package.json /work/package.json
+RUN npm install
+RUN npm install -g nodemon
 
-# # Copy poetry.lock* in case it doesn't exist in the repo
-# COPY ./app/pyproject.toml ./app/poetry.lock* /app/
+COPY ./src/ /work/src/
 
-# # Allow installing dev dependencies to run tests
-# RUN poetry install --no-root --no-dev
+ENTRYPOINT [ "nodemon","--inspect=0.0.0.0","./src/server.js" ]
 
-# COPY ./app ./
+FROM node:12.4.0-alpine as prod
 
-# ENV PYTHONPATH=/app
+WORKDIR /work/
+COPY ./src/package.json /work/package.json
+RUN npm install
+COPY ./src/ /work/
 
-#FROM fastapi-rest-api-crud/uvicorn-gunicorn-fastapi:python3.7
+CMD node .
 
-#COPY ./ ./
+# # Make your container listen on port 3000 at runtime
+# EXPOSE 3000
 
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
+# # Define the command to run your app using CMD which defines your runtime
+# CMD ["node", "./src/server.js"]
 
-LABEL maintainer="Francisco Roa <franroav@gmail.com>"
+# # Use an official Node runtime as a parent image for development
+# FROM node:12.4.0-alpine as debug
 
-WORKDIR /code
+# # Set the working directory in the container for debug stage
+# WORKDIR /work/
 
-COPY ./app/requirements.txt /code/app/requirements.txt
+# # Copy the package.json file to the work directory
+# COPY ./src/package.json /work/package.json
 
-RUN pip install --no-cache-dir --upgrade -r /code/app/requirements.txt
+# # Install any needed packages specified in package.json
+# RUN npm install
 
-COPY ./app /code/app
+# # Globally install nodemon for development
+# RUN npm install -g nodemon
 
-CMD python main.py
+# # Copy the rest of the application
+# COPY ./src/ /work/src/
+
+# # Run the app when the container launches with nodemon and debugging enabled
+# ENTRYPOINT ["nodemon", "--inspect=0.0.0.0", "./src/server.js"]
+
+# # Use an official Node runtime as a parent image for production
+# FROM node:12.4.0-alpine as prod
+
+# # Set the working directory in the container for production stage
+# WORKDIR /work/
+
+# # Copy the package.json file to the work directory
+# COPY ./src/package.json /work/package.json
+
+# # Install any needed packages specified in package.json
+# RUN npm install
+
+# # Copy the rest of the application
+# COPY ./src/ /work/
+
+# # Make your container listen on port 3000 at runtime
+# EXPOSE 3000
+
+# # Define the command to run your app using CMD which defines your runtime
+# CMD ["node", "./src/server.js"]

@@ -1,4 +1,4 @@
-name: Deploy to ECR
+name: Deploy to ECR and EKS Cluster
 
 on:
   push:
@@ -11,7 +11,6 @@ jobs:
   build-and-push:
     name: Build and Push Docker Images to ECR
     runs-on: ubuntu-latest
-    # These permissions are needed to interact with GitHub's OIDC Token endpoint. New
     permissions:
       id-token: write
       contents: read
@@ -21,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Debug AWS Credentials
         run: |
@@ -88,7 +87,6 @@ jobs:
     name: Deploy to AWS
     needs: build-and-push
     runs-on: ubuntu-latest
-    # These permissions are needed to interact with GitHub's OIDC Token endpoint. New
     permissions:
       id-token: write
       contents: read
@@ -98,7 +96,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -138,14 +136,17 @@ jobs:
           GIT_AUTHOR_NAME: github-actions
           GIT_AUTHOR_EMAIL: github-actions@github.com
 
-      - name: Deploy API image to Amazon ECS
-        run: |
-          set -e
-          docker pull ${{ steps.login-ecr.outputs.registry }}/api-repo:latest${{ github.sha }}
-          # Additional steps for deploying API image to ECS go here
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v2.0
+        with:
+          version: "v1.24.0"
+        id: install-kubectl
 
-      - name: Deploy Frontend image to Amazon ECS
+      - name: Configure kubectl to use EKS
         run: |
-          set -e
-          docker pull ${{ steps.login-ecr.outputs.registry }}/frontend-repo:latest${{ github.sha }}
-          # Additional steps for deploying Frontend image to ECS go here
+          aws eks update-kubeconfig --name your-cluster-name --region us-east-1
+
+      - name: Deploy to EKS
+        run: |
+          kubectl apply -f deployment.yaml
+          kubectl apply -f service.yaml

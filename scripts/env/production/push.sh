@@ -32,6 +32,7 @@ docker push "${repository_url}:${tag}"
 
 # cd "$source_path"
 
+
 # # Authenticate with ECR
 # aws ecr get-login-password --region "$region" | docker login --username AWS --password-stdin "$repository_url"
 
