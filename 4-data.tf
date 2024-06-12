@@ -1,3 +1,7 @@
+/* -------------------------------------------------------------------------- */
+/*                                  AWS DATA                                  */
+/* -------------------------------------------------------------------------- */
+
 # account identity
 data "aws_caller_identity" "current" {}
 
@@ -10,6 +14,34 @@ data "aws_region" "current" {}
 data "tls_certificate" "github_actions_oidc_endpoint" {
   url = var.github_actions_oidc_url
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                  AWS DATA POLICY                                   */
+/* -------------------------------------------------------------------------- */
+
+
+data "aws_iam_policy_document" "federated_assume_policy" {
+  count = var.is_create_github_oidc ? 1 : 0
+
+  statement {
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    effect  = "Allow"
+
+    principals {
+      type        = "Federated"
+      identifiers = [local.oidc_provider_arn]
+    }
+
+    condition {
+      test     = "StringLike"
+      variable = "${local.plain_oidc_url}:sub"
+
+      values = flatten([for repo_name, repo_path in local.ecr_repos : ["repo:${repo_name}:*"]])
+    }
+  }
+}
+
+
 
 
 # data "external" "thumbprint" {
@@ -42,24 +74,3 @@ data "tls_certificate" "github_actions_oidc_endpoint" {
 
 #   url = var.github_actions_oidc_url
 # }
-
-data "aws_iam_policy_document" "federated_assume_policy" {
-  count = var.is_create_github_oidc ? 1 : 0
-
-  statement {
-    actions = ["sts:AssumeRoleWithWebIdentity"]
-    effect  = "Allow"
-
-    principals {
-      type        = "Federated"
-      identifiers = [local.oidc_provider_arn]
-    }
-
-    condition {
-      test     = "StringLike"
-      variable = "${local.plain_oidc_url}:sub"
-
-      values = flatten([for repo_name, repo_path in local.ecr_repos : ["repo:${repo_name}:*"]])
-    }
-  }
-}

@@ -31,6 +31,7 @@ locals {
   ecr_repos = {
     frontend = "frontend-repo",
     api      = "api-repo",
+    fluentd = "fluentd-repo",
     # Add more services as needed
   }
 

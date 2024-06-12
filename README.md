@@ -113,7 +113,7 @@ set up on https://github.com/Arktyle/DevExHiringTest2/settings/secrets/actions
 Create an AWS EKS cluster with CLI eksctl
 in this oportunity commit i will use just one command to create my eks cluster instead of using terraform 
 
-1. eksctl create cluster --name webkonce --region us-east-1 --nodegroup-name linux-nodes --node-type t2.micro --nodes 2
+1. eksctl create cluster --name webkonce --region us-east-1 --nodegroup-name linux-nodes --node-type t2.micro --nodes 2 --version 1.28
 
 ```
 # k8s Project Resources yaml 🚀

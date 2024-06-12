@@ -17,7 +17,46 @@ COPY ./src/package.json /work/package.json
 RUN npm install
 COPY ./src/ /work/
 
+# Create log directory
+RUN mkdir -p /var/log/containers
+# Ensure the log directory is writeable
+RUN chmod -R 777 /var/log/containers
+
+# CMD ["node", "./src/server.js"]
+
 CMD node .
+
+
+
+
+
+
+# FROM node:12.4.0-alpine as debug
+
+# WORKDIR /work/
+
+# COPY ./src/package.json /work/package.json
+# RUN npm install
+# RUN npm install -g nodemon
+
+# COPY ./src/ /work/src/
+
+# ENTRYPOINT [ "nodemon","--inspect=0.0.0.0","./src/server.js" ]
+
+# FROM node:12.4.0-alpine as prod
+
+# WORKDIR /work/
+# COPY ./src/package.json /work/package.json
+# RUN npm install
+# COPY ./src/ /work/
+
+# CMD node .
+
+
+
+
+
+
 
 # # Make your container listen on port 3000 at runtime
 # EXPOSE 3000

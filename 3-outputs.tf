@@ -1,7 +1,6 @@
-# output "trigged_by" {
-#   value = null_resource.build_push_dkr_img.triggers
-# }
-
+/* -------------------------------------------------------------------------- */
+/*                                  OUTPUTS                                */
+/* -------------------------------------------------------------------------- */
 
 output "account_id" {
   value = data.aws_caller_identity.current.account_id
@@ -47,6 +46,13 @@ output "ecrpush_role_policy_attachment_arn" {
 output "github_actions_oidc_provider_arn" {
   value = aws_iam_openid_connect_provider.github_actions.arn
 }
+
+
+# output "trigged_by" {
+#   value = null_resource.build_push_dkr_img.triggers
+# }
+
+
 # output "docker_build_commands" {
 #   value = local.dkr_build_cmds
 # }

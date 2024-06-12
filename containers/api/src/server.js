@@ -1,51 +1,94 @@
-// const express = require('express');
-// const app = express();
-// const port = 3000;
-// const host = '0.0.0.0'
+/**
+ * PRODUCTION CONFIGURATION / 
+ * @param {*} config
+ * @param {*} ENV
+ * @param {*} SERVER
+ * @returns {Object} // ALL OBJECT RESPONSES
+ */
 
-// // Route 1: GET /api/users
-// app.get('/api/users', (req, res) => {
-//   res.json([
-//     { id: 1, name: 'John Doe', email: 'john@example.com' },
-//     { id: 2, name: 'Jane Smith', email: 'jane@example.com' },
-//     { id: 3, name: 'Jim Brown', email: 'jim@example.com' }
-//   ]);
-// });
+// require("dotenv").config();
+// require("dotenv").config();
+// const config = require("./config/config").ENV;
+// global.ENV = config;
+// global.node_env = process.env.NODE_ENV;
 
-// // Route 2: GET /api/products
-// app.get('/api/products', (req, res) => {
-//   res.json([
-//     { id: 1, name: 'Product 1', price: 10.99 },
-//     { id: 2, name: 'Product 2', price: 19.99 },
-//     { id: 3, name: 'Product 3', price: 29.99 }
-//   ]);
-// });
+// const Server = require("./models/server");
+// const server = new Server();
 
-// // Route 3: GET /api/orders
-// app.get('/api/orders', (req, res) => {
-//   res.json([
-//     { id: 1, user_id: 1, product_id: 2, quantity: 1 },
-//     { id: 2, user_id: 3, product_id: 1, quantity: 4 },
-//     { id: 3, user_id: 2, product_id: 3, quantity: 2 }
-//   ]);
-// });
+// server.listen();
 
-// // Start the server
-// app.listen(port, host);
 
+
+/**
+ * DEVELOPMENT CONFIGURATION / 
+ * @param {*} PORT
+ * @param {*} ENV
+ * @param {*} HOST
+ * @returns {Object} // ALL OBJECT RESPONSES
+ */
 
 'use strict';
 
 const express = require('express');
+const expressWinston = require('express-winston');
+const { createLogger, format, transports } = require('winston');
+const OS = require('os');
+const uuidv4 = require('uuid').v4;  // Correctly import uuid
 
 const PORT = 3000;
 const HOST = '0.0.0.0';
-const OS = require('os');
 const ENV = 'DEV';
 
-const app = express();
+const app = express(); // Define Express app
 
-// Route 1: GET /api/users
+// Configure winston logger
+const logger = createLogger({
+  level: 'info',
+  format: format.combine(
+    format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    format.json()
+  ),
+  defaultMeta: { service: 'user-service' },
+  transports: [
+    new transports.Console(),
+    new transports.File({ filename: '/var/log/app/app.log' }) // Adjust the path as needed
+  ],
+});
+
+
+// Middleware to log requests and responses
+app.use(expressWinston.logger({
+  winstonInstance: logger,
+  msg: (req, res) => {
+    const body = {
+      uuid: uuidv4(),
+      container: 'node-app',
+      statusCode: res.statusCode,
+      timestamp: new Date().toISOString(), // Use ISO string format for the timestamp
+      path: req.url,
+      tiempo: res.responseTime + 'ms',
+      estado: res.statusCode < 300 ? 'success' : 'error',
+      request: {
+        method: req.method,
+        headers: req.headers,
+        body: req.body
+      },
+    };
+    return JSON.stringify(body);
+  },
+  meta: true,
+  dynamicMeta: (req, res) => {
+    return {
+      userAgent: req.headers['user-agent'],
+      remoteAddress: req.connection.remoteAddress,
+      referer: req.headers['referer'] || '',
+      containerName: 'node-app' // Add your container name here
+    };
+  }
+}));
+
+
+// Ejemplos rutas
 app.get('/api/users', (req, res) => {
   res.json([
     { id: 1, name: 'John Doe', email: 'john@example.com' },
@@ -54,7 +97,6 @@ app.get('/api/users', (req, res) => {
   ]);
 });
 
-// Route 2: GET /api/products
 app.get('/api/products', (req, res) => {
   res.json([
     { id: 1, name: 'Product 1', price: 10.99 },
@@ -63,7 +105,6 @@ app.get('/api/products', (req, res) => {
   ]);
 });
 
-// Route 3: GET /api/orders
 app.get('/api/orders', (req, res) => {
   res.json([
     { id: 1, user_id: 1, product_id: 2, quantity: 1 },
@@ -76,15 +117,14 @@ app.get('/', (req, res) => {
   res.statusCode = 200;
   const msg = 'Hello from /test Node!';
   res.send(getPage(msg));
-  // res.send('Hello world \n');
+});
+
+app.listen(PORT, HOST, () => {
+  logger.info(`Running on http://${HOST}:${PORT}`);
 });
 
 
-app.listen(PORT, HOST);
-console.log(`Running on http://${HOST}:${PORT}`);
-
 function getPage(message) {
-
   let body = "<!DOCTYPE html>\n"
     + "<html>\n"
     + "<style>\n"
