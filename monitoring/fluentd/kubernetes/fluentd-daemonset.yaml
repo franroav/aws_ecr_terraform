@@ -27,7 +27,7 @@ spec:
         - name: FLUENT_UID
           value: "0"
         - name: FLUENT_ELASTICSEARCH_HOST
-          value: "elasticsearch.fluentd.svc.cluster.local"
+          value: "elasticsearch.elastic-kibana"
         - name: FLUENT_ELASTICSEARCH_PORT
           value: "9200"
         - name: FLUENT_ELASTICSEARCH_SCHEME
