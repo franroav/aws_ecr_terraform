@@ -1,27 +1,151 @@
 # AWS EKS CLUSTER 🌟
 
-## LOCAL ENVIROMENT
-1. [Project local resources yaml](#project_local_yaml) 🛳️
+## Table of Contents
+1. [Introduction](#introduction) 🛳️
+2. [Local Environment Setup](#local-environment-setup) 🛠️
+3. [Important Information](#important-information) 📜
+   - [Clone Repository](#clone-repository) 📦
+   - [Project Structure](#project-structure) 📂
+   - [Install Necessary Tools](#install-necessary-tools) 🔧
+   - [Configure AWS SSO](#configure-aws-sso) 🔑
+   - [GitHub Workflow Secrets](#github-workflow-secrets) 🔢
+   - [Terraform Environment Variables](#terraform-environment-variables) 🌍
+   - [GitFlow Workflow](#gitflow-workflow) 🚀
+   - [Create AWS EKS Cluster](#create-aws-eks-cluster) 📈
+   - [Terraform ECR Setup](#terraform-ecr-setup) 🐳
+   - [K8s Project Resources](#k8s-project-resources) 🛳️
+   - [Terraform Project Resources](#terraform-project-resources) 📜
+   - [Project Description](#project-description) 📜
+   - [Homework](#homework) 📄
 
-### Important Information
+## Introduction
+<a name="introduction"></a>
 
-0. [Clone repository and checkout branch Git Hub Commands](#clone_repository) 📦
-1. [Project Structure](#project_structure) 📄
-2. [Install necesary tools](#install_tools) 🛠️
-3. [aws configure sso](#prerequisites) 🔑
-4. [Versión Control](#version_control) 🔒
-5. [Gitflow Secret variables](#gitflow_secret) 🔢
-6. [Terraform Enviroment variables](#terraform_env) 🔢
-7. [Gitflow Workflow](#gitflow_workflow) 📄
-8. [Create an AWS EKS cluster](#create_cluster) 🚀
-9. [Terraform create repositories and build and push docker images to ECR](#ecr) 🐳
-10. [k8s Project Resources yaml](#project_yaml) 🛳️
-11. [Terraform Project Resources](#project_resources) 📜
-12. [Terraform Project Description](#project_description) 📜
-13. [Homework](#homework) 📄
+Design and develop an application using a programming language and framework that you are familiar with (preferably Node.js or Java). The application must expose at least one endpoint that responds to an HTTP GET request with a "Hello World!" message. You will then deploy this application to a Kubernetes or ECS cluster and establish a CI/CD pipeline.
 
+Software Architecture and Design Patterns
+1. Overview
+The architecture of the project consists of several components working together to ensure a seamless deployment, management, and scalability of a microservices application. The primary components include:
+- Infrastructure as Code (IaC): Terraform
+- Containerization: Docker
+- Orchestration: Kubernetes (EKS)
+- Continuous Integration/Continuous Deployment (CI/CD): GitHub Actions
+- Package Management: Helm
+- Monitoring and Logging: Prometheus, Fluentd, and Elasticsearch
 
-## REPOSITORY
+2. Flow Diagram
+![Flow Diagram](https://s3.amazonaws.com/awsfranroavdeveloper.click/resources/images/logo-solicitante/flow-diagram.png)
+
+3. Arquitecture Diagram
+![Arquitecture Diagram](https://s3.amazonaws.com/awsfranroavdeveloper.click/resources/images/logo-solicitante/eks-arq-diagram.png)
+
+4. Design Patterns
+    3.1. Microservices Architecture
+    - Description: The application is broken down into smaller, independent services, each responsible for a specific piece of functionality.
+    - Benefits: Improved scalability, independent deployment, fault isolation, and better alignment with DevOps practices.
+    3.2. Infrastructure as Code (IaC)
+    - Tool: Terraform
+    - Pattern: Declarative Configuration
+    - Description: Define the desired state of infrastructure in code and use Terraform to provision and manage AWS resources.
+    - Benefits: Version-controlled infrastructure, repeatability, and automated provisioning.
+    3.3. Containerization
+    - Tool: Docker
+    - Pattern: Immutable Infrastructure
+    - Description: Package the application and its dependencies into Docker containers, ensuring consistency across development, testing, and production environments.
+    - Benefits: Environment consistency, scalability, and isolation.
+    3.4. Orchestration
+    - Tool: Kubernetes (EKS)
+    - Pattern: Container Orchestration
+    - Description: Use Kubernetes to manage containerized applications in a clustered environment, providing automation, scalability, and resilience.
+    - Benefits: Automated deployment, scaling, and management of containerized applications.
+    3.5. Continuous Integration/Continuous Deployment (CI/CD)
+    - Tool: GitHub Actions
+    - Pattern: CI/CD Pipeline
+    - Description: Automate the building, testing, and deployment of applications using GitHub Actions.
+    - Benefits: Faster release cycles, automated testing, and reduced manual intervention.
+    3.6. Service Discovery and Load Balancing
+    - Tool: Kubernetes (EKS)
+    - Pattern: Service Mesh
+    - Description: Use Kubernetes services and ingress controllers to handle service discovery and load balancing.
+    - Benefits: Improved reliability, scalability, and ease of service communication.
+    3.7. Monitoring and Logging
+    - Tools: Prometheus, Fluentd, Elasticsearch
+    - Pattern: Centralized Logging and Monitoring
+    - Description: Collect logs and metrics from applications and infrastructure, and aggregate them in a central location for analysis.
+    - Benefits: Improved observability, troubleshooting, and performance monitoring.
+
+5. Detailed Component Description
+    4.1. Infrastructure as Code (IaC) with Terraform
+    - Define Resources: Use Terraform scripts to define AWS resources such as VPCs, subnets, EKS clusters, IAM roles, and security groups.
+    - Provisioning: Run terraform apply to provision the defined resources.
+    4.2. Containerization with Docker
+    - Dockerfile: Create a Dockerfile for each microservice, defining the environment and dependencies.
+    - Build and Push: Build Docker images and push them to Amazon ECR.
+    4.3. Orchestration with Kubernetes (EKS)
+    - Cluster Setup: Use eksctl to create and manage EKS clusters.
+    - Deployment Manifests: Define Kubernetes manifests (Deployment, Service, Ingress) to deploy applications to the EKS cluster.
+    - Helm Charts: Use Helm charts to package Kubernetes manifests for easier management and deployment.
+    4.4. CI/CD with GitHub Actions
+    - Pipeline Definition: Define GitHub Actions workflows for building, testing, and deploying applications.
+    - Automation: Automate the entire process from code commit to deployment using GitHub Actions.
+    4.5. Service Discovery and Load Balancing
+    - Ingress Controller: Use an ingress controller (like Nginx) to manage external access to services.
+    - Internal Services: Use Kubernetes services for internal service-to-service communication.
+    4.6. Monitoring and Logging
+    - Prometheus: Set up Prometheus for collecting and querying metrics.
+    - Fluentd: Use Fluentd to collect and forward logs to Elasticsearch.
+    - Elasticsearch: Store and analyze logs with Elasticsearch.
+
+    GitHub Actions
+        ├── Clone Repository
+        ├── Build Docker Image
+        ├── Push Docker Image to ECR
+        ├── Run Terraform Scripts
+        ├── Deploy to EKS using Helm
+        └── Monitor and Log
+
+    Docker
+        ├── Build Image
+        └── Push Image to ECR
+
+    Amazon ECR
+        └── Store Docker Images
+
+    Terraform
+        └── Provision Infrastructure
+
+    AWS EKS
+        └── Cluster Management
+
+    Kubernetes
+        ├── Deploy Applications
+        └── Use Helm
+
+    Helm
+        └── Manage Kubernetes Applications
+
+    Monitoring and Logging
+        ├── Prometheus
+        ├── Fluentd
+        └── Elasticsearch
+
+## Local Environment Setup
+<a name="local-environment-setup"></a>
+
+### Terraform Environment Variables
+<a name="terraform-environment-variables"></a>
+
+```
+- TF_VAR_AWS_ACCESS_KEY_ID
+- TF_VAR_AWS_SECRET_ACCESS_KEY
+- TF_VAR_AWS_SESSION_TOKEN
+- TF_VAR_AWS_ACCOUNT_ID
+- TF_VAR_AWS_REGION
+- TF_VAR_AWS_PROFILE
+
+```
+
+## OWNER REPOSITORY
 <a name="clone_repository"/>
 
 ```
@@ -76,12 +200,53 @@ push.sh  version.sh
 ```
 Install on your local machine or light weight linux alpine container where you can install this tools... for windows you might use (scoop or chocolatey as package manager to install this tools)
 
-1. Install docker 
-2. Install Kubectl
-3. Install eksctl 
-4. Install [Terraform](https://www.terraform.io/downloads.html).
-5. Install Helm
+```
+### 1. Install docker
 
+```
+sudo apt-get update
+sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt-get update
+sudo apt-get install docker-ce
+sudo systemctl status docker
+```
+
+### 1. Install eksctl
+
+```
+curl -s "https://api.github.com/repos/weaveworks/eksctl/releases/latest" | grep "browser_download_url" | grep "linux_amd64.tar.gz" | cut -d '"' -f 4 | wget -qi -
+tar -xzf eksctl_*.tar.gz
+sudo mv eksctl /usr/local/bin
+eksctl version
+```
+### 2. Install Kubectl
+
+```
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/
+kubectl version --client
+```
+
+### 3. Install Terraform
+
+```
+curl -LO "https://releases.hashicorp.com/terraform/$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r .current_version)/terraform_$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r .current_version)_linux_amd64.zip"
+unzip terraform_*.zip
+sudo mv terraform /usr/local/bin/
+terraform version
+
+```
+
+### 4. Install Helm
+
+```
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod +x get_helm.sh
+./get_helm.sh
+helm version
 ```
 
 ### aws configure sso  ✅
@@ -128,9 +293,9 @@ set up on https://github.com/Arktyle/DevExHiringTest2/settings/secrets/actions
 
 ```
 Create an AWS EKS cluster with CLI eksctl
-in this oportunity commit i will use just one command to create my eks cluster instead of using terraform 
+in this oportunity commit i will use just one command to create my eks cluster instead of using terraform EKS --version 1.28 or latest
 
-1. eksctl create cluster --name webkonce --region us-east-1 --nodegroup-name linux-nodes --node-type t2.micro --nodes 2 --version 1.28
+1. eksctl create cluster --name webkonce --region us-east-1 --nodegroup-name linux-nodes --node-type t2.micro --nodes 2 
 
 ```
 ## k8s Project Resources yaml EKS CLUSTER 🚀
