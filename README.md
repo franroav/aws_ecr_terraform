@@ -95,7 +95,7 @@ The architecture of the project consists of several components working together 
     - Prometheus: Set up Prometheus for collecting and querying metrics.
     - Fluentd: Use Fluentd to collect and forward logs to Elasticsearch.
     - Elasticsearch: Store and analyze logs with Elasticsearch.
-
+```
     GitHub Actions
         ├── Clone Repository
         ├── Build Docker Image
@@ -128,7 +128,7 @@ The architecture of the project consists of several components working together 
         ├── Prometheus
         ├── Fluentd
         └── Elasticsearch
-
+```
 ## Local Environment Setup
 <a name="local-environment-setup"></a>
 
@@ -171,27 +171,29 @@ The architecture of the project consists of several components working together 
 
 The structure of this project defined by folders with specific purpose
 
-```
-Root Folder
 
+Root Folder
+```
 Mode                 LastWriteTime         Length Name
 ----                 -------------         ------ ----
 0-versions.tf  2-variables.tf  4-data.tf       containers       docker-compose.yml  nginx-template  repo-policy.json  service.yaml       terraform.tfstate.backup
 1-locals.tf    3-outputs.tf    6-resources.tf  deployment.yaml  monitoring          README.md       scripts           terraform.tfstate  terraform.tfvars
-
+```
 ./containers
+```
 api  fluentd  frontend  webserver
-
+```
 ./monitoring
+```
 elasticsearch  fluentd  prometheus
-
+```
 ./nginx-template
+```
 config  deployments  ingress  manifest  namespace.yaml  services
-
+```
 ./scripts/env/production
+```
 push.sh  version.sh
-
-
 ```
 
 ### Install tools requirements ✅
@@ -199,6 +201,10 @@ push.sh  version.sh
 
 ```
 Install on your local machine or light weight linux alpine container where you can install this tools... for windows you might use (scoop or chocolatey as package manager to install this tools)
+
+or use docker 
+
+Docker run -it -v ${PWD}:/work -v $home/kube-tools/.kube:/root/.kube -v $home/kube-tools/.aws:/root/.aws --net host --rm --workdir /work aimvector/kube-tools:latest
 
 ```
 ### 1. Install docker
@@ -288,32 +294,32 @@ set up on https://github.com/Arktyle/DevExHiringTest2/settings/secrets/actions
 
 
 
-# Create an AWS EKS cluster 🚀
+# CREATE EKS CLUSTER 🚀
 <a name="create_cluster"/>
 
-```
 Create an AWS EKS cluster with CLI eksctl
 in this oportunity commit i will use just one command to create my eks cluster instead of using terraform EKS --version 1.28 or latest
 
+```
 1. eksctl create cluster --name webkonce --region us-east-1 --nodegroup-name linux-nodes --node-type t2.micro --nodes 2 
 
 ```
-## k8s Project Resources yaml EKS CLUSTER 🚀
+## APP DEPLOYMENT AND SERVICE CONFIGURE 🚀
 <a name="project_yaml"/>
 
-```
+
 YAML resources `Prod enviroment`
-
+```
 1. deployment.yaml 
-
+```
 `deployment` This YAML file defines a Kubernetes Deployment named "webkonce" with one replica of a pod that runs a container from the image "274127640471.dkr.ecr.us-east-1.amazonaws.com/webkonce:1.1", always pulls the latest image, and exposes port 8080.
 
+```
 2. service.yaml 
-
+```
 `service` This YAML file defines a Kubernetes Service named "webkonce" of type LoadBalancer, which routes TCP traffic from port 80 to port 8080 on pods labeled with "app: webkonce".
 
-```
-## k8s Project Resources yaml EKS CLUSTER 🚀
+## MONITORING 🚀
 
 `Optionally for monitoring purpose`
 
@@ -380,7 +386,7 @@ Let's deploy our `daemonset`:
 18. kubectl apply -f ./monitoring/prometheus/kubernetes/service-monitor.yaml
 ```
 
-## k8s Project Resources yaml KIND CLUSTER LOCAL ENVIROMENT 🚀
+## KIND CLUSTER LOCAL ENVIROMENT TESTING 🚀
 <a name="project_local_yaml"/>
 
 YAML resources `Local enviroment`
