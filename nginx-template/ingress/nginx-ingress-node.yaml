@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example-ingress
+  namespace: default
+  # Anotación obsoleta
+  # annotations:
+  #   kubernetes.io/ingress.class: "nginx"
+spec:
+  ingressClassName: "nginx" # Usar spec.ingressClassName en su lugar
+  rules:
+  - host: webkonce.test
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-app-service
+            port:
+              number: 80

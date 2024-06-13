@@ -1,22 +1,24 @@
 # AWS EKS CLUSTER 🌟
 
+## LOCAL ENVIROMENT
+1. [Project local resources yaml](#project_local_yaml) 🛳️
 
 ### Important Information
 
 0. [Clone repository and checkout branch Git Hub Commands](#clone_repository) 📦
-3. [Project Structure](#project_structure) 📄
-1. [Install necesary tools](#install_tools) 🛠️
-2. [aws configure sso](#prerequisites) 🔑
-3. [Versión Control](#version_control) 🔒
-4. [Gitflow Secret variables](#gitflow_secret) 🔢
-4. [Terraform Enviroment variables](#terraform_env) 🔢
-5. [Gitflow Workflow](#gitflow_workflow) 📄
-6. [Create an AWS EKS cluster](#create_cluster) 🚀
-7. [Terraform create repositories and build and push docker images to ECR](#ecr) 🐳
-8. [k8s Project Resources yaml](#project_yaml) 🛳️
-9. [Terraform Project Resources](#project_resources) 📜
-9. [Terraform Project Description](#project_description) 📜
-10. [Homework](#homework) 📄
+1. [Project Structure](#project_structure) 📄
+2. [Install necesary tools](#install_tools) 🛠️
+3. [aws configure sso](#prerequisites) 🔑
+4. [Versión Control](#version_control) 🔒
+5. [Gitflow Secret variables](#gitflow_secret) 🔢
+6. [Terraform Enviroment variables](#terraform_env) 🔢
+7. [Gitflow Workflow](#gitflow_workflow) 📄
+8. [Create an AWS EKS cluster](#create_cluster) 🚀
+9. [Terraform create repositories and build and push docker images to ECR](#ecr) 🐳
+10. [k8s Project Resources yaml](#project_yaml) 🛳️
+11. [Terraform Project Resources](#project_resources) 📜
+12. [Terraform Project Description](#project_description) 📜
+13. [Homework](#homework) 📄
 
 
 ## REPOSITORY
@@ -46,10 +48,25 @@
 The structure of this project defined by folders with specific purpose
 
 ```
+Root Folder
 
 Mode                 LastWriteTime         Length Name
 ----                 -------------         ------ ----
--a----        07-06-2024     14:52          13552 README.md
+0-versions.tf  2-variables.tf  4-data.tf       containers       docker-compose.yml  nginx-template  repo-policy.json  service.yaml       terraform.tfstate.backup
+1-locals.tf    3-outputs.tf    6-resources.tf  deployment.yaml  monitoring          README.md       scripts           terraform.tfstate  terraform.tfvars
+
+./containers
+api  fluentd  frontend  webserver
+
+./monitoring
+elasticsearch  fluentd  prometheus
+
+./nginx-template
+config  deployments  ingress  manifest  namespace.yaml  services
+
+./scripts/env/production
+push.sh  version.sh
+
 
 ```
 
@@ -116,19 +133,169 @@ in this oportunity commit i will use just one command to create my eks cluster i
 1. eksctl create cluster --name webkonce --region us-east-1 --nodegroup-name linux-nodes --node-type t2.micro --nodes 2 --version 1.28
 
 ```
-# k8s Project Resources yaml 🚀
+## k8s Project Resources yaml EKS CLUSTER 🚀
 <a name="project_yaml"/>
 
 ```
-YAML resources.
+YAML resources `Prod enviroment`
 
 1. deployment.yaml 
 
-This YAML file defines a Kubernetes Deployment named "webkonce" with one replica of a pod that runs a container from the image "274127640471.dkr.ecr.us-east-1.amazonaws.com/webkonce:1.1", always pulls the latest image, and exposes port 8080.
+`deployment` This YAML file defines a Kubernetes Deployment named "webkonce" with one replica of a pod that runs a container from the image "274127640471.dkr.ecr.us-east-1.amazonaws.com/webkonce:1.1", always pulls the latest image, and exposes port 8080.
 
 2. service.yaml 
 
-This YAML file defines a Kubernetes Service named "webkonce" of type LoadBalancer, which routes TCP traffic from port 80 to port 8080 on pods labeled with "app: webkonce".
+`service` This YAML file defines a Kubernetes Service named "webkonce" of type LoadBalancer, which routes TCP traffic from port 80 to port 8080 on pods labeled with "app: webkonce".
+
+```
+## k8s Project Resources yaml EKS CLUSTER 🚀
+
+`Optionally for monitoring purpose`
+
+```
+
+1. cd ./containers/fluentd
+2. docker build --no-cache --progress=plain -t webkonce/fluentd .
+3. kind load docker-image webkonce/fluentd --name dev
+4. cd ..
+5. cd ..
+6. kubectl apply -f ./monitoring/fluentd/kubernetes/namespace.yaml
+7. kubectl create -f ./monitoring/prometheus/kubernetes/1.28/manifest/setup/
+8. kubectl create -f ./monitoring/prometheus/kubernetes/1.28/manifest/
+
+```
+
+Let's deploy our example app that writes logs to `stdout`
+
+```
+9. kubectl apply -f ./monitoring/fluentd/kubernetes/counter.yaml
+```
+
+## Fluentd Configmap
+
+We have 5 files in our `fluentd-configmap.yaml` :
+* fluent.conf: Our main config which includes all other configurations
+* pods-kind-fluent.conf: `tail` config that sources all pod logs on the `kind` cluster.
+  Note: `kind` cluster writes its log in a different format
+* pods-fluent.conf: `tail` config that sources all pod logs on the `kubernetes` host in the cloud. <br/>
+  Note: When running K8s in the cloud, logs may go into JSON format.
+* file-fluent.conf: `match` config to capture all logs and write it to file for testing log collection </br>
+  Note: This is great to test if collection of logs works
+* elastic-fluent.conf: `match` config that captures all logs and sends it to `elasticseach`
+
+Let's deploy our `configmap`:
+
+```
+10. kubectl apply -f ./monitoring/fluentd/kubernetes/fluentd-configmap.yaml
+11. kubectl apply -f  ./monitoring/fluentd/kubernetes/fluentd-rbac.yaml
+
+```
+
+## Fluentd Daemonset
+
+Let's deploy our `daemonset`:
+
+```
+12. kubectl apply -f ./monitoring/fluentd/kubernetes/fluentd-daemonset-eks.yaml
+
+```
+## Demo ElasticSearch and Kibana
+
+```
+13. kubectl apply -f ./monitoring/elasticsearch/kubernetes/namespace.yaml
+14. kubectl apply -f ./monitoring/elasticsearch/kubernetes/elastic-demo.yaml
+15. kubectl apply -f ./monitoring/elasticsearch/kubernetes/kibana-demo.yaml
+```
+
+## Demo Prometheus 
+
+```
+16. kubectl apply -f ./monitoring/prometheus/kubernetes/prometheus.yaml
+17. kubectl apply -f ./monitoring/prometheus/kubernetes/prometheus-service.yaml
+18. kubectl apply -f ./monitoring/prometheus/kubernetes/service-monitor.yaml
+```
+
+## k8s Project Resources yaml KIND CLUSTER LOCAL ENVIROMENT 🚀
+<a name="project_local_yaml"/>
+
+YAML resources `Local enviroment`
+
+## NGNIX
+
+```
+1. kind create cluster --name dev
+2. helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx 
+3. helm repo update
+4. cd ./containers/api
+5. docker build --no-cache --progress=plain -t node-app .
+6. kind load docker-image node-app --name dev 
+7. cd ..
+8. cd ..
+```
+
+## NODE BACKEND APP
+
+```
+9. kubectl apply -f .\nginx-template\deployments\backend\backend-deployment.yaml
+10. kubectl apply -f .\nginx-template\deployments\backend\backend-service.yaml
+11. kubectl apply -f .\nginx-template\deployments\backend\nginx-config-node.yaml
+12. kubectl apply -f .\nginx-template\deployments\backend\nginx-deployment.yaml
+13. kubectl apply -f .\nginx-template\deployments\backend\nginx-ingress-node.yaml
+14. kubectl apply -f .\nginx-template\deployments\backend\nginx-service.yaml
+
+
+kubectl -n default port-forward svc/backend-app-service 80:80    
+
+```
+
+## FLUENTD
+
+```
+15. cd ./containers/fluentd
+16. docker build --no-cache --progress=plain -t webkonce/fluentd .
+17. kind load docker-image webkonce/fluentd --name dev
+18. cd..  
+19. cd..  
+20. kubectl apply -f ./monitoring/fluentd/kubernetes/namespace.yaml
+21. kubectl create -f ./monitoring/prometheus/kubernetes/1.28/manifest/setup/
+22. kubectl create -f ./monitoring/prometheus/kubernetes/1.28/manifest/
+23. kubectl apply -f ./monitoring/fluentd/kubernetes/counter.yaml
+24. kubectl apply -f ./monitoring/fluentd/kubernetes/fluentd-configmap.yaml
+25. kubectl apply -f  ./monitoring/fluentd/kubernetes/fluentd-rbac.yaml
+26. kubectl apply -f ./monitoring/fluentd/kubernetes/fluentd-daemonset.yaml
+```
+
+## ELASTICSEARCH AND KIBANA
+
+```
+27. kubectl apply -f ./monitoring/elasticsearch/kubernetes/namespace.yaml
+28. kubectl apply -f ./monitoring/elasticsearch/kubernetes/elastic-demo.yaml
+29. kubectl apply -f ./monitoring/elasticsearch/kubernetes/kibana-demo.yaml
+```
+
+## Kibana
+
+```
+kubectl -n elastic-kibana port-forward svc/kibana 5601
+
+```
+
+## Grafana
+
+```
+30. kubectl apply -f ./monitoring/prometheus/kubernetes/grafana-service.yaml
+kubectl port-forward -n monitoring svc/grafana 3000:80
+
+```
+
+## PROMETHEUS
+
+```
+31. kubectl apply -f ./monitoring/prometheus/kubernetes/prometheus.yaml
+32. kubectl apply -f ./monitoring/prometheus/kubernetes/prometheus-service.yaml
+33. kubectl apply -f ./monitoring/prometheus/kubernetes/service-monitor.yaml
+
+kubectl -n monitoring port-forward svc/prometheus-operated 9090
 
 ```
 
