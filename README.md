@@ -26,6 +26,15 @@ Design and develop an application using a programming language and framework tha
 0. Optimize Kubernetes Cost Overview 
  Visit [https://instances.vantage.sh/](https://instances.vantage.sh/) 
 
+General Strategies for Cost Optimization
+
+- Use Reserved Instances: For predictable workloads, reserved instances can provide significant cost savings over On-Demand pricing.
+- Spot Instances: Take advantage of EC2 Spot Instances for cost savings on compute resources.
+- Monitor and Analyze: Use AWS Cost Explorer and AWS Budgets to monitor usage and set alerts for unexpected charges.
+- Rightsizing: Regularly review and adjust the size of your instances and other resources to ensure they are not over-provisioned.
+- Optimize Storage Costs: Use lifecycle policies to automatically move less frequently accessed data to lower-cost storage tiers.
+- Automate Resource Management: Use tools like AWS Auto Scaling, AWS Lambda, and scheduled scaling actions to automatically manage resource usage and costs.
+
 
 ![Services Charges](https://s3.amazonaws.com/awsfranroavdeveloper.click/resources/images/logo-solicitante/cost_changes_by_services.png)
 
