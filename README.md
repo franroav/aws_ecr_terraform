@@ -23,11 +23,10 @@
 
 Design and develop an application using a programming language and framework that you are familiar with (preferably Node.js or Java). The application must expose at least one endpoint that responds to an HTTP GET request with a "Hello World!" message. You will then deploy this application to a Kubernetes or ECS cluster and establish a CI/CD pipeline.
 
-Optimize Kubernetes Cost Overview (EC2,RDS,ELK...)
-0. Visit [cost optimization](https://instances.vantage.sh/) 
+0. Optimize Kubernetes Cost Overview 
+ Visit [https://instances.vantage.sh/](https://instances.vantage.sh/) 
 
-Software Architecture and Design Patterns
-1. Overview
+1. Software Architecture and Design Patterns
 The architecture of the project consists of several components working together to ensure a seamless deployment, management, and scalability of a microservices application. The primary components include:
 - Infrastructure as Code (IaC): Terraform
 - Containerization: Docker
