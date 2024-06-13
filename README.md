@@ -340,6 +340,27 @@ in this oportunity commit i will use just one command to create my eks cluster i
 1. eksctl create cluster --name webkonce --region us-east-1 --nodegroup-name linux-nodes --node-type t2.micro --nodes 2 
 
 ```
+
+### TERRAFORM - CREATE REPOSITORIES, BUILD AND PUSH DOCKER IMAGES TO ECR  🚀
+<a name="terraform-ecr-setup"/>
+
+1. Create ECR repositories and images with terraform 
+
+- **cd into root folder  DevExHiringTest2**: enter directory.
+
+```
+Install on your local machine or light weight linux alpine container where you can install this tools... for windows you might use (scoop or chocolatey as package manager to install this tools)
+
+- **terraform init -upgrade**: Initialization resources.
+- **terraform validate**: Validate resources.
+- **terraform fmt**: Format code resources.
+- **terraform plan**: Preview changes before applying.
+- **terraform apply -auto-approve**: Deploy the infrastructure.
+- **terraform destroy -auto-approve**: Destroy the deployed infrastructure. (Optional)
+
+```
+
+
 ## APP DEPLOYMENT AND SERVICE CONFIGURE 🚀
 <a name="k8s-project-resources"/>
 
@@ -628,25 +649,6 @@ kubectl -n monitoring port-forward svc/prometheus-operated 9090
 
 ```
 
-
-### Terraform create repositories and build and push docker images to ECR  🚀
-<a name="terraform-ecr-setup"/>
-
-1. Create ECR repositories and images with terraform 
-
-- **cd into root folder  DevExHiringTest2**: enter directory.
-
-```
-Install on your local machine or light weight linux alpine container where you can install this tools... for windows you might use (scoop or chocolatey as package manager to install this tools)
-
-- **terraform init -upgrade**: Initialization resources.
-- **terraform validate**: Validate resources.
-- **terraform fmt**: Format code resources.
-- **terraform plan**: Preview changes before applying.
-- **terraform apply -auto-approve**: Deploy the infrastructure.
-- **terraform destroy -auto-approve**: Destroy the deployed infrastructure. (Optional)
-
-```
 
 ### Github commit changes to project repository 🛠️
 <a name="gitflow-workflow"/>
