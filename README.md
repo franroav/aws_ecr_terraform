@@ -26,6 +26,15 @@ Design and develop an application using a programming language and framework tha
 0. Optimize Kubernetes Cost Overview 
  Visit [https://instances.vantage.sh/](https://instances.vantage.sh/) 
 
+
+![Services Charges](https://s3.amazonaws.com/awsfranroavdeveloper.click/resources/images/logo-solicitante/cost_changes_by_services.png)
+
+![Free Tier Layer Usage](https://s3.amazonaws.com/awsfranroavdeveloper.click/resources/images/logo-solicitante/free_tier_layer.png)
+
+![Tax's](https://s3.amazonaws.com/awsfranroavdeveloper.click/resources/images/logo-solicitante/tax.png)
+
+![Cost Anomaly Detection](https://s3.amazonaws.com/awsfranroavdeveloper.click/resources/images/logo-solicitante/cost_anomaly_detection.png)
+
 1. Software Architecture and Design Patterns
 The architecture of the project consists of several components working together to ensure a seamless deployment, management, and scalability of a microservices application. The primary components include:
 - Infrastructure as Code (IaC): Terraform
