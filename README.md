@@ -1,4 +1,5 @@
 # AWS EKS CLUSTER 🌟
+* **Francisco Javier Roa Valenzuela** - *Developer* -
 
 ## Table of Contents
 1. [Introduction](#introduction) 🛳️
@@ -513,73 +514,68 @@ server.listen();
 
 ![production api](https://s3.amazonaws.com/awsfranroavdeveloper.click/resources/images/logo-solicitante/api_example.png)
 
-# Consideraciones:
+# Considerations:
 
-La Collection de prueba en la colleción Subscriptions deben existir en la base de datos.
-existe un archivo(seed) .json con la collection que se necesita insertar en base de datos
+The Test Collection in the Subscriptions collection must exist in the database.
+There is a .json file (seed) with the example collection or following the insertion instructions to mongodb discussed above is enough to have data for the api
 
-Aun falta me faltan hacer mas pruebas unitarias en el front 
-aun falta verificar y comprobar si mi aplicacion en docker esta correctamente configurada y esta todo bien definidos los servicios que componen mi aplicación
-
-# endPoints 
+#endPoints 
 
 EndPoints:
 ```
 subscription:
 
-GET /api/subscription -> Retorna toda la lista con todos los suscriptor en un array.
-GET /api/subscription/:id -> Retorna objeto con un suscriptor
-PUT /api/subscription/:id -> Actualiza un suscriptor.
-POST /api/subscription -> Añade un suscriptor.
-POST /api/subscription/register -> Retorna un link promocional con un codigo de subscripción.
-DELETE /api/subscription/:id -> Elimina un suscriptor.
+GET /api/subscription -> Returns the entire list with all subscribers in an array.
+GET /api/subscription/:id -> Returns object with a subscriber
+PUT /api/subscription/:id -> Updates a subscriber.
+POST /api/subscription -> Adds a subscriber.
+POST /api/subscription/register -> Returns a promotional link with a subscription code.
+DELETE /api/subscription/:id -> Delete a subscriber.
 ```
 
-## Pre-requisitos
-_Para poder ejecutar el proyecto en tu máquina local debes tener pre-instaladas las siguientes herramientas:_
+## Pre requirements
+_In order to run the project on your local machine you must have the following tools pre-installed:_
 ```
 Node 14.x.x
 Docker
 Docker-compose
 ```
 
-## Instalación
-_Antes de ejecutar el proyecto debes instalar las dependencias que son necesarias para que se ejecute de manera correcta y lo hacemos de la siguiente forma:_
+## Facility
+_Before running the project you must install the dependencies that are necessary for it to run correctly and we do it in the following way:_
 ```shell
-$ cd reactNodeMongoSubscriberApp
-$ cd ./backend 
-$ cd ./frontend 
-$ npm install
+$ cd into root directory where is the package.json
+$npm install
 ```
 
-## Test
-_Este proyecto cuenta con pruebas unitarias realizadas con Mocha y Chai_
-_Abrir 2 terminales, en una realizar la ejecución del proyecto y en la otra ejecutar lo siguiente:_
+##Test
+_This project has unit tests carried out with Mocha and Chai_
+_Open 2 terminals, in one execute the project and in the other execute the following:_
 ```shell
-$ cd reactNodeMongoSubscriberApp
-$ cd ./backend 
-$ npm run test
+$ cd into root directory where is the package.json
+$npm run test
 ```
-## Análisis estático de calidad de código
-_para iniciar las pruebas de código con Sonarqube debemos seguir los siguientes pasos:_
+##Static code quality analysis
+_to start code testing with Sonarqube we must follow the following steps:_
 ```shell
-$ docker pull sonarqube
+$docker pull sonarqube
 $ docker run -d --name sonarqube -p 9000:9000 sonarqube
 ```
-Luego abrir el navegador en localhost:9000, esperar a que cargue sonarqube
-Te pedirá usuario y contraseña, ambas son 'admin', luego debes cambiar el password.
+Then open the browser at localhost:9000, wait for sonarqube to load
+It will ask you for username and password, both are 'admin', then you must change the password.
 
-ahora vamos al proyecto al archivo 'sonar-project.properties' y vamos a poner el usuario y contraseña en las ultimas lineas:
+Now we go to the project to the file 'sonar-project.properties' and we are going to put the username and password in the last lines:
 ```
 sonar.login=<USER>
 sonar.password=<PASSWORD>
 ```
-luego ejecutamos el código:
+then we execute the code:
 ```shell
-$ npm run sonar
+$npm run sonar
 ```
-esperamos a que no existan errores y el proceso termine.
-volvemos al navegador localhost:9000/projects y recargamos, tu proyecto aparecerá en unos instantes.
+We wait until there are no errors and the process ends.
+We return to the browser localhost:9000/projects and reload, your project will appear in a few moments.
+
 
 ## FLUENTD
 
