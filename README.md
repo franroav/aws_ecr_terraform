@@ -36,6 +36,7 @@ The architecture of the project consists of several components working together 
 - Monitoring and Logging: Prometheus, Fluentd, and Elasticsearch
 
 2. Flow Diagram
+
 ![Flow Diagram](https://s3.amazonaws.com/awsfranroavdeveloper.click/resources/images/logo-solicitante/flow-diagram.png)
 
 3. Arquitecture Diagram
