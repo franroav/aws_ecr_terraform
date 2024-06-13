@@ -42,58 +42,71 @@ The architecture of the project consists of several components working together 
 ![Arquitecture Diagram](https://s3.amazonaws.com/awsfranroavdeveloper.click/resources/images/logo-solicitante/eks-arq-diagram.png)
 
 4. Design Patterns
-    3.1. Microservices Architecture
+
+    4.1. Microservices Architecture
     - Description: The application is broken down into smaller, independent services, each responsible for a specific piece of functionality.
     - Benefits: Improved scalability, independent deployment, fault isolation, and better alignment with DevOps practices.
-    3.2. Infrastructure as Code (IaC)
+
+    4.2. Infrastructure as Code (IaC)
     - Tool: Terraform
     - Pattern: Declarative Configuration
     - Description: Define the desired state of infrastructure in code and use Terraform to provision and manage AWS resources.
     - Benefits: Version-controlled infrastructure, repeatability, and automated provisioning.
-    3.3. Containerization
+
+    4.3. Containerization
     - Tool: Docker
     - Pattern: Immutable Infrastructure
     - Description: Package the application and its dependencies into Docker containers, ensuring consistency across development, testing, and production environments.
     - Benefits: Environment consistency, scalability, and isolation.
-    3.4. Orchestration
+
+    4.4. Orchestration
     - Tool: Kubernetes (EKS)
     - Pattern: Container Orchestration
     - Description: Use Kubernetes to manage containerized applications in a clustered environment, providing automation, scalability, and resilience.
     - Benefits: Automated deployment, scaling, and management of containerized applications.
-    3.5. Continuous Integration/Continuous Deployment (CI/CD)
+
+    4.5. Continuous Integration/Continuous Deployment (CI/CD)
     - Tool: GitHub Actions
     - Pattern: CI/CD Pipeline
     - Description: Automate the building, testing, and deployment of applications using GitHub Actions.
     - Benefits: Faster release cycles, automated testing, and reduced manual intervention.
-    3.6. Service Discovery and Load Balancing
+
+    4.6. Service Discovery and Load Balancing
     - Tool: Kubernetes (EKS)
     - Pattern: Service Mesh
     - Description: Use Kubernetes services and ingress controllers to handle service discovery and load balancing.
     - Benefits: Improved reliability, scalability, and ease of service communication.
-    3.7. Monitoring and Logging
+
+    4.7. Monitoring and Logging
     - Tools: Prometheus, Fluentd, Elasticsearch
     - Pattern: Centralized Logging and Monitoring
     - Description: Collect logs and metrics from applications and infrastructure, and aggregate them in a central location for analysis.
     - Benefits: Improved observability, troubleshooting, and performance monitoring.
 
 5. Detailed Component Description
-    4.1. Infrastructure as Code (IaC) with Terraform
+
+    5.1. Infrastructure as Code (IaC) with Terraform
     - Define Resources: Use Terraform scripts to define AWS resources such as VPCs, subnets, EKS clusters, IAM roles, and security groups.
     - Provisioning: Run terraform apply to provision the defined resources.
-    4.2. Containerization with Docker
+
+    5.2. Containerization with Docker
     - Dockerfile: Create a Dockerfile for each microservice, defining the environment and dependencies.
     - Build and Push: Build Docker images and push them to Amazon ECR.
-    4.3. Orchestration with Kubernetes (EKS)
+
+    5.3. Orchestration with Kubernetes (EKS)
     - Cluster Setup: Use eksctl to create and manage EKS clusters.
     - Deployment Manifests: Define Kubernetes manifests (Deployment, Service, Ingress) to deploy applications to the EKS cluster.
     - Helm Charts: Use Helm charts to package Kubernetes manifests for easier management and deployment.
-    4.4. CI/CD with GitHub Actions
+
+    5.4. CI/CD with GitHub Actions
     - Pipeline Definition: Define GitHub Actions workflows for building, testing, and deploying applications.
     - Automation: Automate the entire process from code commit to deployment using GitHub Actions.
-    4.5. Service Discovery and Load Balancing
+
+    5.5. Service Discovery and Load Balancing
     - Ingress Controller: Use an ingress controller (like Nginx) to manage external access to services.
     - Internal Services: Use Kubernetes services for internal service-to-service communication.
-    4.6. Monitoring and Logging
+
+    5.6. Monitoring and Logging
     - Prometheus: Set up Prometheus for collecting and querying metrics.
     - Fluentd: Use Fluentd to collect and forward logs to Elasticsearch.
     - Elasticsearch: Store and analyze logs with Elasticsearch.
