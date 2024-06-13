@@ -8,8 +8,8 @@
    - [Project Structure](#project-structure) 📂
    - [Install Necessary Tools](#install-necessary-tools) 🔧
    - [Configure AWS SSO](#configure-aws-sso) 🔑
-   - [GitHub Workflow Secrets](#github-workflow-secrets) 🔢
    - [Terraform Environment Variables](#terraform-environment-variables) 🌍
+   - [GitHub Workflow Secrets](#github-workflow-secrets) 🔢
    - [GitFlow Workflow](#gitflow-workflow) 🚀
    - [Create AWS EKS Cluster](#create-aws-eks-cluster) 📈
    - [Terraform ECR Setup](#terraform-ecr-setup) 🐳
@@ -213,7 +213,7 @@ push.sh  version.sh
 ```
 
 ### Install tools requirements ✅
-<a name="install_tools"/>
+<a name="install-necessary-tools"/>
 
 ```
 Install on your local machine or light weight linux alpine container where you can install this tools... for windows you might use (scoop or chocolatey as package manager to install this tools)
@@ -272,7 +272,7 @@ helm version
 ```
 
 ### aws configure sso  ✅
-<a name="prerequisites"/>
+<a name="configure-aws-sso"/>
 
 1- [Create user on IAM indentity Center](https://aws.amazon.com/iam/identity-center/)
 
@@ -283,7 +283,7 @@ helm version
 
 
 ### Github workflow Secrets 🔢
-<a name="gitflow_secret"/>
+<a name="github-workflow-secrets"/>
 
 set up on https://github.com/Arktyle/DevExHiringTest2/settings/secrets/actions
 
@@ -295,7 +295,7 @@ set up on https://github.com/Arktyle/DevExHiringTest2/settings/secrets/actions
 - **TF_VAR_AWS_PROFILE=**"xxxxxxxxxxxxxxxx"
 
 ## Terraform enviroment TF Variables 🔢
-<a name="terraform_env"/>
+<a name="terraform-environment-variables"/>
 
 - Update `terraform.tfvars` with your specific values.
 
@@ -311,7 +311,7 @@ set up on https://github.com/Arktyle/DevExHiringTest2/settings/secrets/actions
 
 
 # CREATE EKS CLUSTER 🚀
-<a name="create_cluster"/>
+<a name="create-aws-eks-cluster"/>
 
 Create an AWS EKS cluster with CLI eksctl
 in this oportunity commit i will use just one command to create my eks cluster instead of using terraform EKS --version 1.28 or latest
@@ -321,7 +321,7 @@ in this oportunity commit i will use just one command to create my eks cluster i
 
 ```
 ## APP DEPLOYMENT AND SERVICE CONFIGURE 🚀
-<a name="project_yaml"/>
+<a name="k8s-project-resources"/>
 
 
 YAML resources `Prod enviroment`
@@ -488,7 +488,7 @@ kubectl -n monitoring port-forward svc/prometheus-operated 9090
 
 
 ### Terraform create repositories and build and push docker images to ECR  🚀
-<a name="ecr"/>
+<a name="terraform-ecr-setup"/>
 
 1. Create ECR repositories and images with terraform 
 
@@ -507,7 +507,7 @@ Install on your local machine or light weight linux alpine container where you c
 ```
 
 ### Github commit changes to project repository 🛠️
-<a name="gitflow_commit"/>
+<a name="gitflow-workflow"/>
 
 - **workflow**"./github/workflows/main.yml"
 - **branch**"franroav/develop"
@@ -524,7 +524,6 @@ make your changes.
 ```
 
 ### GitHub Actions Workflow Steps 🚀
-<a name="gitflow_actions"/>
 
 - **workflow**"./github/workflows/main.yml"
 - **branch**"franroav/develop"
@@ -575,7 +574,7 @@ Checkout Code: Uses actions/checkout@v3.
 
 
 ## Terraform Project Resources
-<a name="project_resources"/>
+<a name="terraform-project-resources"/>
 
 ### 1. AWS ECR Repositories 🛳️
 
