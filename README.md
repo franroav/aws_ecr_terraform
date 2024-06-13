@@ -58,6 +58,7 @@ The architecture of the project consists of several components working together 
 ![Flow Diagram](https://s3.amazonaws.com/awsfranroavdeveloper.click/resources/images/logo-solicitante/flow-diagram.png)
 
 3. Arquitecture Diagram
+
 ![Arquitecture Diagram](https://s3.amazonaws.com/awsfranroavdeveloper.click/resources/images/logo-solicitante/eks-arq-diagram.png)
 
 4. Design Patterns
@@ -425,7 +426,7 @@ Let's deploy our `daemonset`:
 
 YAML resources `Local enviroment`
 
-## NGNIX
+## LOCAL ENVIROMENT KUBERNETES - NGNIX
 
 ```
 1. kind create cluster --name dev
@@ -438,7 +439,7 @@ YAML resources `Local enviroment`
 8. cd ..
 ```
 
-## NODE BACKEND APP
+## LOCAL ENVIROMENT KUBERNETES - NODE BACKEND APP RESOURCES
 
 ```
 9. kubectl apply -f .\nginx-template\deployments\backend\backend-deployment.yaml
@@ -449,9 +450,332 @@ YAML resources `Local enviroment`
 14. kubectl apply -f .\nginx-template\deployments\backend\nginx-service.yaml
 
 
-kubectl -n default port-forward svc/backend-app-service 80:80    
+kubectl -n default port-forward svc/backend-app-service 80:80 -> backend app service   
+or 
+kubectl -n default port-forward svc/nginx-service 80:80  -> ingress controller 
+```
+
+## OPTIONAL - RUN LOCAL ENVIROMENT NODE BACKEND APP
+
+- cd into the following code on `./containers/api/src/`
+- use `npm run dev`
+
+The following is a mock for testing purpose
+```
+/**
+ * DEVELOPMENT CONFIGURATION / 
+ * @param {*} PORT
+ * @param {*} ENV
+ * @param {*} HOST
+ * @returns {Object} // ALL OBJECT RESPONSES
+ */
+
+
+'use strict';
+
+const express = require('express');
+const expressWinston = require('express-winston');
+const { createLogger, format, transports } = require('winston');
+const OS = require('os');
+const uuidv4 = require('uuid').v4;  // Correctly import uuid
+
+const PORT = 3000;
+const HOST = '0.0.0.0';
+const ENV = 'DEV';
+
+const app = express(); // Define Express app
+
+// Configure winston logger
+const logger = createLogger({
+  level: 'info',
+  format: format.combine(
+    format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    format.json()
+  ),
+  defaultMeta: { service: 'user-service' },
+  transports: [
+    new transports.Console(),
+    new transports.File({ filename: '/var/log/app/app.log' }) // Adjust the path as needed
+  ],
+});
+
+
+// Middleware to log requests and responses
+app.use(expressWinston.logger({
+  winstonInstance: logger,
+  msg: (req, res) => {
+    const body = {
+      uuid: uuidv4(),
+      container: 'node-app',
+      statusCode: res.statusCode,
+      timestamp: new Date().toISOString(), // Use ISO string format for the timestamp
+      path: req.url,
+      tiempo: res.responseTime + 'ms',
+      estado: res.statusCode < 300 ? 'success' : 'error',
+      request: {
+        method: req.method,
+        headers: req.headers,
+        body: req.body
+      },
+    };
+    return JSON.stringify(body);
+  },
+  meta: true,
+  dynamicMeta: (req, res) => {
+    return {
+      userAgent: req.headers['user-agent'],
+      remoteAddress: req.connection.remoteAddress,
+      referer: req.headers['referer'] || '',
+      containerName: 'node-app' // Add your container name here
+    };
+  }
+}));
+
+
+// Ejemplos rutas
+app.get('/api/users', (req, res) => {
+  res.json([
+    { id: 1, name: 'John Doe', email: 'john@example.com' },
+    { id: 2, name: 'Jane Smith', email: 'jane@example.com' },
+    { id: 3, name: 'Jim Brown', email: 'jim@example.com' }
+  ]);
+});
+
+app.get('/api/products', (req, res) => {
+  res.json([
+    { id: 1, name: 'Product 1', price: 10.99 },
+    { id: 2, name: 'Product 2', price: 19.99 },
+    { id: 3, name: 'Product 3', price: 29.99 }
+  ]);
+});
+
+app.get('/api/orders', (req, res) => {
+  res.json([
+    { id: 1, user_id: 1, product_id: 2, quantity: 1 },
+    { id: 2, user_id: 3, product_id: 1, quantity: 4 },
+    { id: 3, user_id: 2, product_id: 3, quantity: 2 }
+  ]);
+});
+
+app.get('/', (req, res) => {
+  res.statusCode = 200;
+  const msg = 'Hello from /test Node!';
+  res.send(getPage(msg));
+});
+
+app.listen(PORT, HOST, () => {
+  logger.info(`Running on http://${HOST}:${PORT}`);
+});
+
+
+function getPage(message) {
+  let body = "<!DOCTYPE html>\n"
+    + "<html>\n"
+    + "<style>\n"
+    + "body, html {\n"
+    + "  height: 100%;\n"
+    + "  margin: 0;\n"
+    + "}\n"
+    + "\n"
+    + ".bgimg {\n"
+    + "  background-image: url('https://www.w3schools.com/w3images/forestbridge.jpg');\n"
+    + "  height: 100%;\n"
+    + "  background-position: center;\n"
+    + "  background-size: cover;\n"
+    + "  position: relative;\n"
+    + "  color: white;\n"
+    + "  font-family: \"Courier New\", Courier, monospace;\n"
+    + "  font-size: 25px;\n"
+    + "}\n"
+    + "\n"
+    + ".topleft {\n"
+    + "  position: absolute;\n"
+    + "  top: 0;\n"
+    + "  left: 16px;\n"
+    + "}\n"
+    + "\n"
+    + ".bottomleft {\n"
+    + "  position: absolute;\n"
+    + "  bottom: 0;\n"
+    + "  left: 16px;\n"
+    + "}\n"
+    + "\n"
+    + ".middle {\n"
+    + "  position: absolute;\n"
+    + "  top: 50%;\n"
+    + "  left: 50%;\n"
+    + "  transform: translate(-50%, -50%);\n"
+    + "  text-align: center;\n"
+    + "}\n"
+    + "\n"
+    + "hr {\n"
+    + "  margin: auto;\n"
+    + "  width: 40%;\n"
+    + "}\n"
+    + "</style>\n"
+    + "<body>\n"
+    + "\n"
+    + "<div class=\"bgimg\">\n"
+    + "  <div class=\"topleft\">\n"
+    + "    <p>ENVIRONMENT: " + ENV + "</p>\n"
+    + "  </div>\n"
+    + "  <div class=\"middle\">\n"
+    + "    <h1>Host/container name</h1>\n"
+    + "    <hr>\n"
+    + "    <p>" + OS.hostname() + "</p>\n"
+    + "  </div>\n"
+    + "  <div class=\"bottomleft\">\n"
+    + "    <p>" + message + "</p>\n"
+    + "  </div>\n"
+    + "</div>\n"
+    + "\n"
+    + "</body>\n"
+    + "</html>\n";
+  return body;
+}
+```
 
 ```
+/**
+ * PRODUCTION CONFIGURATION / 
+ * @param {*} config
+ * @param {*} ENV
+ * @param {*} SERVER
+ * @returns {Object} // ALL OBJECT RESPONSES
+ */
+
+require("dotenv").config();
+require("dotenv").config();
+const config = require("./config/config").ENV;
+global.ENV = config;
+global.node_env = process.env.NODE_ENV;
+
+const Server = require("./models/server");
+const server = new Server();
+
+server.listen();
+```
+
+## OPTIONAL - PRODUCTION CODE - LOCAL ENVIROMENT NODE BACKEND APP
+
+- uncomment the following code on `./containers/api/src/server.js`
+
+```
+/**
+ * PRODUCTION CONFIGURATION / 
+ * @param {*} config
+ * @param {*} ENV
+ * @param {*} SERVER
+ * @returns {Object} // ALL OBJECT RESPONSES
+ */
+
+require("dotenv").config();
+require("dotenv").config();
+const config = require("./config/config").ENV;
+global.ENV = config;
+global.node_env = process.env.NODE_ENV;
+
+const Server = require("./models/server");
+const server = new Server();
+
+server.listen();
+```
+
+- Open a terminal and write the following mongodb instructions:  
+
+```
+
+1. mongosh
+2. use cb_subscription
+
+3. db.createCollection("traces")
+4. db.createCollection("subscriptions")
+
+5. db.traces.insertMany([{email: "trace1@example.com",name: "Trace 1"},{email: "trace2@example.com",name: "Trace 2"}])
+
+
+6. db.subscriptions.insertMany([{name: "Subscription 1",invitation: 10,amount: 100,email: "sub1@example.com",address: "123 Main St",gender: "Male",code:"ABC123",traces: [{email: "trace1@example.com", name: "Trace 1"},{email: "trace2@example.com", name: "Trace 2"}],created_at: new Date().toISOString(), updated_at: new Date().toISOString()}, {name: "Subscription 2", invitation: 20, amount: 200, email: "sub2@example.com", address: "456 Elm St", gender: "Female", code: "XYZ789", traces: [{email: "trace1@example.com", name: "Trace 1"}], created_at: new Date().toISOString(), updated_at: new Date().toISOString()}])
+
+
+7. db.traces.find().pretty()
+8. db.subscriptions.find().pretty()
+
+
+```
+
+- use this following route as GET on insomnia or postman: `http://localhost:5000/api/subscription` 
+
+2. production api example
+
+![production api](https://s3.amazonaws.com/awsfranroavdeveloper.click/resources/images/logo-solicitante/api_example.png)
+
+# Consideraciones:
+
+La Collection de prueba en la colleción Subscriptions deben existir en la base de datos.
+existe un archivo(seed) .json con la collection que se necesita insertar en base de datos
+
+Aun falta me faltan hacer mas pruebas unitarias en el front 
+aun falta verificar y comprobar si mi aplicacion en docker esta correctamente configurada y esta todo bien definidos los servicios que componen mi aplicación
+
+# endPoints 
+
+EndPoints:
+```
+subscription:
+
+GET /api/subscription -> Retorna toda la lista con todos los suscriptor en un array.
+GET /api/subscription/:id -> Retorna objeto con un suscriptor
+PUT /api/subscription/:id -> Actualiza un suscriptor.
+POST /api/subscription -> Añade un suscriptor.
+POST /api/subscription/register -> Retorna un link promocional con un codigo de subscripción.
+DELETE /api/subscription/:id -> Elimina un suscriptor.
+```
+
+## Pre-requisitos
+_Para poder ejecutar el proyecto en tu máquina local debes tener pre-instaladas las siguientes herramientas:_
+```
+Node 14.x.x
+Docker
+Docker-compose
+```
+
+## Instalación
+_Antes de ejecutar el proyecto debes instalar las dependencias que son necesarias para que se ejecute de manera correcta y lo hacemos de la siguiente forma:_
+```shell
+$ cd reactNodeMongoSubscriberApp
+$ cd ./backend 
+$ cd ./frontend 
+$ npm install
+```
+
+## Test
+_Este proyecto cuenta con pruebas unitarias realizadas con Mocha y Chai_
+_Abrir 2 terminales, en una realizar la ejecución del proyecto y en la otra ejecutar lo siguiente:_
+```shell
+$ cd reactNodeMongoSubscriberApp
+$ cd ./backend 
+$ npm run test
+```
+## Análisis estático de calidad de código
+_para iniciar las pruebas de código con Sonarqube debemos seguir los siguientes pasos:_
+```shell
+$ docker pull sonarqube
+$ docker run -d --name sonarqube -p 9000:9000 sonarqube
+```
+Luego abrir el navegador en localhost:9000, esperar a que cargue sonarqube
+Te pedirá usuario y contraseña, ambas son 'admin', luego debes cambiar el password.
+
+ahora vamos al proyecto al archivo 'sonar-project.properties' y vamos a poner el usuario y contraseña en las ultimas lineas:
+```
+sonar.login=<USER>
+sonar.password=<PASSWORD>
+```
+luego ejecutamos el código:
+```shell
+$ npm run sonar
+```
+esperamos a que no existan errores y el proceso termine.
+volvemos al navegador localhost:9000/projects y recargamos, tu proyecto aparecerá en unos instantes.
 
 ## FLUENTD
 
