@@ -27,6 +27,56 @@ Design and develop an application using a programming language and framework tha
 0. Optimize Kubernetes Cost Overview 
  Visit [https://instances.vantage.sh/](https://instances.vantage.sh/) 
 
+## Cost Calculation
+
+The costs were calculated for a time period starting from Wednesday 17:00 to Friday 15:00, which is a total of 46 hours.
+
+### Total Time Period
+
+- **Start Time:** Wednesday 17:00
+- **End Time:** Friday 15:00
+- **Total Hours:** 46 hours
+
+### Cost Breakdown
+
+Here is the detailed breakdown of costs for different services:
+
+| Service                                    | Total Cost | Hourly Cost Rate |
+|--------------------------------------------|------------|------------------|
+| **Total Cost**                             | $4.78      | $0.1039          |
+| **Elastic Container Service for Kubernetes** | $3.13      | $0.0680          |
+| **EC2-Other**                              | $1.44      | $0.0313          |
+| **VPC**                                    | $0.21      | $0.0046          |
+| **Route 53**                               | $0.00      | $0.0000          |
+| **S3**                                     | $0.00      | $0.0000          |
+| **Elastic Load Balancing**                 | $0.00      | $0.0000          |
+| **EC2 Container Registry (ECR)**           | $0.00      | $0.0000          |
+| **EC2-Instances**                          | $0.00      | $0.0000          |
+
+### Formulas Used
+
+To calculate the hourly cost rate for each service, the following formula was used:
+
+\[ \text{Hourly Cost Rate} = \frac{\text{Total Cost}}{\text{Total Time Period (hours)}} \]
+
+Where:
+- **Total Cost** is the cost of the service for the given period.
+- **Total Time Period (hours)** is the total number of hours in the given period (46 hours in this case).
+
+### Example Calculations
+
+1. **Total Cost:**
+   \[ \text{Hourly Cost Rate} = \frac{\$4.78}{46} = \$0.1039 \text{ per hour} \]
+
+2. **Elastic Container Service for Kubernetes:**
+   \[ \text{Hourly Cost Rate} = \frac{\$3.13}{46} = \$0.0680 \text{ per hour} \]
+
+3. **EC2-Other:**
+   \[ \text{Hourly Cost Rate} = \frac{\$1.44}{46} = \$0.0313 \text{ per hour} \]
+
+4. **VPC:**
+   \[ \text{Hourly Cost Rate} = \frac{\$0.21}{46} = \$0.0046 \text{ per hour} \] 
+
 General Strategies for Cost Optimization
 
 - Use Reserved Instances: For predictable workloads, reserved instances can provide significant cost savings over On-Demand pricing.
