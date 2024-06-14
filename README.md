@@ -683,6 +683,12 @@ kubectl port-forward -n monitoring svc/grafana 3000:80
 33. kubectl apply -f ./monitoring/prometheus/kubernetes/service-monitor.yaml
 
 kubectl -n monitoring port-forward svc/prometheus-operated 9090
+```
+
+- scrape service monitor 
+
+```
+kubectl -n monitoring port-forward prometheus-applications-0 9090
 
 ```
 
