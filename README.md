@@ -481,6 +481,15 @@ kubectl -n default port-forward svc/nginx-service 80:80  -> ingress controller
 
 - cd into the following code on `./containers/api/src/`
 - use `npm run dev`
+- use `http://localhost:3000/api-docs/` to use api documentation 
+
+- SWAGGER EXPRESS NODEJS
+
+![swagger](https://s3.amazonaws.com/awsfranroavdeveloper.click/resources/images/logo-solicitante/swagger_express_nodejs.png)
+
+- SWAGGER EXPRESS NODEJS - GET API USERS
+
+![Api users](https://s3.amazonaws.com/awsfranroavdeveloper.click/resources/images/logo-solicitante/swagger_express_nodejs_get_api_users.png)
 
 ## OPTIONAL - PRODUCTION CODE - LOCAL ENVIROMENT NODE BACKEND APP
 
