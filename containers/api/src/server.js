@@ -34,12 +34,34 @@ const expressWinston = require('express-winston');
 const { createLogger, format, transports } = require('winston');
 const OS = require('os');
 const uuidv4 = require('uuid').v4;  // Correctly import uuid
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 const PORT = 3000;
 const HOST = '0.0.0.0';
 const ENV = 'DEV';
 
 const app = express(); // Define Express app
+
+// Swagger setup
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Node.js Express API',
+      version: '1.0.0',
+      description: 'API Documentation',
+      contact: {
+        name: 'Developer'
+      },
+      servers: [`http://${HOST}:${PORT}`]
+    }
+  },
+  apis: ['./server.js'] // Point to the file where API routes are defined
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Configure winston logger
 const logger = createLogger({
@@ -55,7 +77,6 @@ const logger = createLogger({
   ],
 });
 
-
 // Middleware to log requests and responses
 app.use(expressWinston.logger({
   winstonInstance: logger,
@@ -64,7 +85,7 @@ app.use(expressWinston.logger({
       uuid: uuidv4(),
       container: 'node-app',
       statusCode: res.statusCode,
-      timestamp: new Date().toISOString(), // Use ISO string format for the timestamp
+      timestamp: new Date().toISOString(),
       path: req.url,
       tiempo: res.responseTime + 'ms',
       estado: res.statusCode < 300 ? 'success' : 'error',
@@ -82,13 +103,35 @@ app.use(expressWinston.logger({
       userAgent: req.headers['user-agent'],
       remoteAddress: req.connection.remoteAddress,
       referer: req.headers['referer'] || '',
-      containerName: 'node-app' // Add your container name here
+      containerName: 'node-app'
     };
   }
 }));
 
+// API Routes
 
-// Ejemplos rutas
+/**
+ * @swagger
+ * /api/users:
+ *   get:
+ *     summary: Retrieve a list of users
+ *     responses:
+ *       200:
+ *         description: A list of users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   name:
+ *                     type: string
+ *                   email:
+ *                     type: string
+ */
 app.get('/api/users', (req, res) => {
   res.json([
     { id: 1, name: 'John Doe', email: 'john@example.com' },
@@ -97,6 +140,28 @@ app.get('/api/users', (req, res) => {
   ]);
 });
 
+/**
+ * @swagger
+ * /api/products:
+ *   get:
+ *     summary: Retrieve a list of products
+ *     responses:
+ *       200:
+ *         description: A list of products
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   name:
+ *                     type: string
+ *                   price:
+ *                     type: number
+ */
 app.get('/api/products', (req, res) => {
   res.json([
     { id: 1, name: 'Product 1', price: 10.99 },
@@ -105,6 +170,30 @@ app.get('/api/products', (req, res) => {
   ]);
 });
 
+/**
+ * @swagger
+ * /api/orders:
+ *   get:
+ *     summary: Retrieve a list of orders
+ *     responses:
+ *       200:
+ *         description: A list of orders
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   user_id:
+ *                     type: integer
+ *                   product_id:
+ *                     type: integer
+ *                   quantity:
+ *                     type: integer
+ */
 app.get('/api/orders', (req, res) => {
   res.json([
     { id: 1, user_id: 1, product_id: 2, quantity: 1 },
@@ -122,7 +211,6 @@ app.get('/', (req, res) => {
 app.listen(PORT, HOST, () => {
   logger.info(`Running on http://${HOST}:${PORT}`);
 });
-
 
 function getPage(message) {
   let body = "<!DOCTYPE html>\n"
@@ -189,5 +277,3 @@ function getPage(message) {
     + "</html>\n";
   return body;
 }
-
-// console.log(`Running version 3 on http://${HOST}:${PORT}`);
