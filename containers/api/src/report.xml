@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testExecutions version="1"><file path="C:\laragon\www\k8s\nodejs\src\test\routesTest.js"><testCase name="Subscription API Tests » GET /api/subscription » should GET all the subscribers and the subscription should be an array" duration="31"/><testCase name="Subscription API Tests » GET /api/subscription » should GET all subscribers with expected keys" duration="6"/><testCase name="Subscription API Tests » GET /api/subscription/:id » should GET a Subscription object with the requested _id" duration="5"><failure message="expected Response{ _events: {}, …(35), …(2) } to have status code 200 but got 404">AssertionError: expected Response{ _events: {}, …(35), …(2) } to have status code 200 but got 404
+    at C:\laragon\www\k8s\nodejs\src\test\routesTest.js:60:33
+    at Request.callback (node_modules\superagent\lib\node\index.js:857:12)
+    at C:\laragon\www\k8s\nodejs\src\node_modules\superagent\lib\node\index.js:1070:18
+    at IncomingMessage.&lt;anonymous&gt; (node_modules\superagent\lib\node\parsers\json.js:21:7)
+    at IncomingMessage.emit (node:events:531:35)
+    at endReadableNT (node:internal/streams/readable:1696:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)</failure></testCase><testCase name="Subscription API Tests » GET /api/subscription/:id » should return 404 Not Found for a non-existing _id" duration="7"><failure message="expected Response{ _events: {}, …(35), …(2) } to have status code 404 but got 500">AssertionError: expected Response{ _events: {}, …(35), …(2) } to have status code 404 but got 500
+    at C:\laragon\www\k8s\nodejs\src\test\routesTest.js:78:31
+    at Request.callback (node_modules\superagent\lib\node\index.js:857:12)
+    at C:\laragon\www\k8s\nodejs\src\node_modules\superagent\lib\node\index.js:1070:18
+    at IncomingMessage.&lt;anonymous&gt; (node_modules\superagent\lib\node\parsers\json.js:21:7)
+    at IncomingMessage.emit (node:events:531:35)
+    at endReadableNT (node:internal/streams/readable:1696:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)</failure></testCase><testCase name="Subscription API Tests » POST /api/subscription » should POST a new subscriber with valid data" duration="7"><failure message="expected Response{ _events: {}, …(35), …(2) } to have status code 200 but got 500">AssertionError: expected Response{ _events: {}, …(35), …(2) } to have status code 200 but got 500
+    at C:\laragon\www\k8s\nodejs\src\test\routesTest.js:105:33
+    at Request.callback (node_modules\superagent\lib\node\index.js:857:12)
+    at C:\laragon\www\k8s\nodejs\src\node_modules\superagent\lib\node\index.js:1070:18
+    at IncomingMessage.&lt;anonymous&gt; (node_modules\superagent\lib\node\parsers\json.js:21:7)
+    at IncomingMessage.emit (node:events:531:35)
+    at endReadableNT (node:internal/streams/readable:1696:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)</failure></testCase><testCase name="Subscription API Tests » POST /api/subscription » should return 400 Bad Request for missing data" duration="5"><failure message="expected Response{ _events: {}, …(35), …(2) } to have status code 400 but got 500">AssertionError: expected Response{ _events: {}, …(35), …(2) } to have status code 400 but got 500
+    at C:\laragon\www\k8s\nodejs\src\test\routesTest.js:128:31
+    at Request.callback (node_modules\superagent\lib\node\index.js:857:12)
+    at C:\laragon\www\k8s\nodejs\src\node_modules\superagent\lib\node\index.js:1070:18
+    at IncomingMessage.&lt;anonymous&gt; (node_modules\superagent\lib\node\parsers\json.js:21:7)
+    at IncomingMessage.emit (node:events:531:35)
+    at endReadableNT (node:internal/streams/readable:1696:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)</failure></testCase><testCase name="Subscription API Tests » DELETE /api/subscription/:id » should DELETE a Subscription" duration="4"><failure message="expected Response{ _events: {}, …(35), …(2) } to have status code 200 but got 404">AssertionError: expected Response{ _events: {}, …(35), …(2) } to have status code 200 but got 404
+    at C:\laragon\www\k8s\nodejs\src\test\routesTest.js:148:33
+    at Request.callback (node_modules\superagent\lib\node\index.js:857:12)
+    at C:\laragon\www\k8s\nodejs\src\node_modules\superagent\lib\node\index.js:1070:18
+    at IncomingMessage.&lt;anonymous&gt; (node_modules\superagent\lib\node\parsers\json.js:21:7)
+    at IncomingMessage.emit (node:events:531:35)
+    at endReadableNT (node:internal/streams/readable:1696:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)</failure></testCase><testCase name="Subscription API Tests » DELETE /api/subscription/:id » should return 404 Not Found for deleting a non-existing Subscription" duration="4"><failure message="expected Response{ _events: {}, …(35), …(2) } to have status code 404 but got 500">AssertionError: expected Response{ _events: {}, …(35), …(2) } to have status code 404 but got 500
+    at C:\laragon\www\k8s\nodejs\src\test\routesTest.js:163:31
+    at Request.callback (node_modules\superagent\lib\node\index.js:857:12)
+    at C:\laragon\www\k8s\nodejs\src\node_modules\superagent\lib\node\index.js:1070:18
+    at IncomingMessage.&lt;anonymous&gt; (node_modules\superagent\lib\node\parsers\json.js:21:7)
+    at IncomingMessage.emit (node:events:531:35)
+    at endReadableNT (node:internal/streams/readable:1696:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)</failure></testCase></file></testExecutions>

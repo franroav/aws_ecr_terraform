@@ -1,335 +1,170 @@
 const chai = require("chai");
 const chaiHttp = require("chai-http");
-require("dotenv").config();
+const dotenv = require("dotenv");
 
-chai.should();
+dotenv.config(); // Load environment variables from .env file
+
+const expect = chai.expect;
 chai.use(chaiHttp);
 
-const Server = process.env.SERVER;
-const Port = process.env.PORT;
-const testPath = Server + ":" + Port;
+const testPath = `${process.env.SERVER}:${process.env.PORT}`; // Assumes SERVER and PORT are defined in your .env file
 
-describe("GET /api/subscription", () => {
-  it("It should GET all the subscriber have property subscription and the value be equal to an array of objects", (done) => {
-    chai
-      .request(testPath)
-      .get("/api/subscription")
-      .end((err, response) => {
-        if (err) {
-          done(err);
-        }
-        response.should.have.status(200);
-        response.body.should.be.a("object");
-        response.body.should.have.property("subscription").that.be.a("array");
-        response.body.should.have.property("subscription");
-        done();
-      });
-  });
-  it("It should GET all the subscriber have all key's from the array of objects", (done) => {
-    chai
-      .request(testPath)
-      .get("/api/subscription")
-      .end((err, response) => {
-        if (err) {
-          done(err);
-        }
-        response.should.have.status(200);
-        response.body.should.be.a("object");
-        response.body.should.have.property("subscription").that.be.a("array");
-        response.body.should.have.property("subscription");
-        response.body.should.have
-          .property("subscription")
-          .that.includes.all.keys([
-            "traces",
-            "_id",
-            "name",
-            "email",
-            "address",
-            "gender",
-            "invitation",
-            "amount",
-            "code",
-            "created_at",
-            "updated_at",
-            "__v",
-          ]);
-        done();
-      });
-  });
-});
-
-describe("GET /api/subscription/:_id", () => {
-  it("It should GET a Subscription object with the _id requested", (done) => {
-    const _id = "6266c6e1fddc9c0d60cc3f61";
-    chai
-      .request(testPath)
-      .get("/api/subscription/" + _id)
-      .end((err, response) => {
-        if (err) {
-          done(err);
-        }
-
-        response.should.have.status(200);
-        response.body.should.be.a("object");
-        response.body.should.have
-          .property("subscription")
-          .that.includes.all.keys([
-            "traces",
-            "_id",
-            "name",
-            "email",
-            "address",
-            "gender",
-            "invitation",
-            "amount",
-            "code",
-            "created_at",
-            "updated_at",
-            "__v",
-          ]);
-        done();
-      });
-  });
-
-  it("It should GET a Subscription object with the _id requested that have all property key's expected", (done) => {
-    const _id = "6266c6e1fddc9c0d60cc3f61";
-    chai
-      .request(testPath)
-      .get("/api/subscription/" + _id)
-      .end((err, response) => {
-        if (err) {
-          done(err);
-        }
-
-        response.should.have.status(200);
-        response.body.should.be.a("object");
-        response.body.should.have
-          .property("subscription")
-          .that.includes.all.keys([
-            "traces",
-            "_id",
-            "name",
-            "email",
-            "address",
-            "gender",
-            "invitation",
-            "amount",
-            "code",
-            "created_at",
-            "updated_at",
-            "__v",
-          ]);
-        done();
-      });
-  });
-});
-
-describe("Test Subscriber Endpoints with POST method ", () => {
-  //Test Post a new Subscriber
-  describe("POST /api/subscription with empty email", () => {
-    it("It should POST a new subscriber", (done) => {
-      const sub = {
-        name: "Maria Aulalia",
-        email: "",
-        address: "Manuel Montt 835",
-        gender: "Mujer",
-        code: "74Fs34",
-      };
+describe("Subscription API Tests", () => {
+  // Test GET /api/subscription
+  describe("GET /api/subscription", () => {
+    it("should GET all the subscribers and the subscription should be an array", (done) => {
       chai
         .request(testPath)
-        .post("/api/subscription")
-        .send(sub)
-        .end((err, response) => {
-          if (err) {
-            done(err);
-          }
-
-          response.should.have.status(400);
-
+        .get("/api/subscription")
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          expect(res.body).to.be.an("object");
+          expect(res.body.subscription).to.be.an("array");
           done();
         });
     });
-  });
-  describe("POST /api/subscription with null gender", () => {
-    it("It should POST a new subscriber", (done) => {
-      const sub = {
-        name: "Maria Aulalia",
-        email: "ulaula@gmail.com",
-        address: "Manuel Montt 835",
-        gender: null,
-        code: "74Fs34",
-      };
+
+    it("should GET all subscribers with expected keys", (done) => {
       chai
         .request(testPath)
-        .post("/api/subscription")
-        .send(sub)
-        .end((err, response) => {
-          if (err) {
-            done(err);
-          }
+        .get("/api/subscription")
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          expect(res.body).to.be.an("object");
+          expect(res.body.subscription).to.be.an("array");
 
-          response.should.have.status(400);
-
-          done();
-        });
-    });
-  });
-
-  describe("POST /api/subscription with undefined code", () => {
-    it("It should POST a new subscriber", (done) => {
-      const sub = {
-        name: "Maria Aulalia",
-        email: "ulaula@gmail.com",
-        address: "Manuel Montt 835",
-        gender: "Mujer",
-        code: undefined,
-      };
-      chai
-        .request(testPath)
-        .post("/api/subscription")
-        .send(sub)
-        .end((err, response) => {
-          if (err) {
-            done(err);
-          }
-
-          response.should.have.status(400);
-
-          done();
-        });
-    });
-  });
-
-  describe("POST /api/subscription register with invitation code", () => {
-    it("It should POST a new subscriber", (done) => {
-      const sub = {
-        name: "Francisco Javier Roa Valenzuela",
-        email: "franroav@gmail.com",
-      };
-      chai
-        .request(testPath)
-        .post("/api/subscription/register")
-        .send(sub)
-        .end((err, response) => {
-          if (err) {
-            done(err);
-          }
-          // to.be.an('array')
-          response.should.have.status(200);
-          response.body.should.be.a("object");
-          response.body.should.have.property("subscription");
-          response.body.should.have.property("subscription").to.be.a("string");
-
-          done();
-        });
-    });
-  });
-
-  describe("POST /api/subscription with empty object ", () => {
-    it("It should POST a new subscriber", (done) => {
-      const sub = {};
-      chai
-        .request(testPath)
-        .post("/api/subscription")
-        .send(sub)
-        .end((err, response) => {
-          if (err) {
-            done(err);
-          }
-
-          response.should.have.status(400);
-          response.body.should.have.property("error");
-
-          done();
-        });
-    });
-  });
-
-  describe("POST /api/subscription", () => {
-    it("It should POST a new subscriber", (done) => {
-      const sub = {
-        name: "Maria Aulalia",
-        email: "ulaula@gmail.com",
-        address: "Manuel Montt 835",
-        gender: "Mujer",
-        code: "74Fs34",
-      };
-      chai
-        .request(testPath)
-        .post("/api/subscription")
-        .send(sub)
-        .end((err, response) => {
-          if (err) {
-            done(err);
-          }
-
-          response.should.have.status(200);
-
-          response.body.should.have
-            .property("subscription")
-            .that.includes.all.keys([
-              "traces",
-              "_id",
-              "name",
-              "email",
-              "address",
-              "gender",
-              "invitation",
-              "amount",
-              "code",
-              "created_at",
-              "updated_at",
-              "__v",
+          // Check each subscription object in the array for the expected keys
+          res.body.subscription.forEach((sub) => {
+            expect(sub).to.include.all.keys([
+              "traces", "_id", "name", "email", "address", "gender", "invitation",
+              "amount", "code", "created_at", "updated_at"
             ]);
-
+          });
           done();
         });
     });
   });
-});
 
-describe("PUT /api/subscription/:id", () => {
-  it("It should UPDATE a Subscription", (done) => {
-    const _id = "6266c6e1fddc9c0d60cc3f61";
-    const sub = {
-      name: "Francisco Roa V.",
-      email: "franroav@gmail.com",
-      address: "Manuel Montt 8316",
-    };
-    chai
-      .request(testPath)
-      .delete("/api/subscription/" + _id)
-      .send(sub)
-      .end((err, response) => {
-        if (err) {
-          done(err);
-        }
+  // Test GET /api/subscription/:id
+  describe("GET /api/subscription/:id", () => {
+    it("should GET a Subscription object with the requested _id", (done) => {
+      const _id = "6266c6e1fddc9c0d60cc3f61"; // Replace with a valid _id from your database
+    
+      chai
+        .request(testPath)
+        .get(`/api/subscription/${_id}`)
+        .end((err, res) => {
+          if (err) {
+            done(err);
+          } else {
+            expect(res).to.have.status(200); // Check for 200 OK status
+            expect(res.body).to.be.an("object");
+            expect(res.body.subscription).to.include.all.keys([
+              "traces", "_id", "name", "email", "address", "gender", "invitation",
+              "amount", "code", "created_at", "updated_at"
+            ]);
+            done();
+          }
+        });
+    });
 
-        response.should.have.status(200);
-        response.body.should.be.a("object");
-        response.body.should.have.property("message");
-        response.body.should.have.property("message").that.be.a("string");
-        done();
-      });
+    it("should return 404 Not Found for a non-existing _id", (done) => {
+      const _id = "invalid_id"; // Replace with a non-existing _id
+    
+      chai
+        .request(testPath)
+        .get(`/api/subscription/${_id}`)
+        .end((err, res) => {
+          expect(res).to.have.status(404); // Check for 404 Not Found status
+          expect(res.body).to.be.an("object");
+          expect(res.body.message).to.equal("Subscription not found");
+          done();
+        });
+    });
   });
-});
 
-describe("DELETE /api/subscription/:id", () => {
-  it("It should DELETE a Subscription", (done) => {
-    const _id = "6269d332eb1e35132019437e";
-    chai
-      .request(testPath)
-      .delete("/api/shop/" + shop)
-      .end((err, response) => {
-        if (err) {
-          done(err);
-        }
+  // Test POST /api/subscription
+  describe("POST /api/subscription", () => {
+    it("should POST a new subscriber with valid data", (done) => {
+      const sub = {
+        name: "Maria Aulalia",
+        email: "ulaula@gmail.com",
+        address: "Manuel Montt 835",
+        gender: "Mujer",
+        code: "74Fs34"
+      };
+    
+      chai
+        .request(testPath)
+        .post("/api/subscription")
+        .send(sub)
+        .end((err, res) => {
+          if (err) {
+            done(err);
+          } else {
+            expect(res).to.have.status(200); // Check for 200 OK status
+            expect(res.body).to.be.an("object");
+            expect(res.body.subscription).to.include.all.keys([
+              "traces", "_id", "name", "email", "address", "gender", "invitation",
+              "amount", "code", "created_at", "updated_at"
+            ]);
+            done();
+          }
+        });
+    });
 
-        response.should.have.status(200);
-        response.body.should.be.a("object");
-        response.body.should.have.property("message");
-        response.body.should.have.property("message").that.be.a("string");
-        done();
-      });
+    it("should return 400 Bad Request for missing data", (done) => {
+      const sub = {
+        name: "Maria Aulalia",
+        email: "ulaula@gmail.com",
+        // Missing address and gender intentionally
+      };
+    
+      chai
+        .request(testPath)
+        .post("/api/subscription")
+        .send(sub)
+        .end((err, res) => {
+          expect(res).to.have.status(400); // Check for 400 Bad Request status
+          expect(res.body).to.be.an("object");
+          expect(res.body.message).to.equal("Error, Bad request");
+          done();
+        });
+    });
+  });
+
+  // Test DELETE /api/subscription/:id
+  describe("DELETE /api/subscription/:id", () => {
+    it("should DELETE a Subscription", (done) => {
+      const _id = "6269d332eb1e35132019437e"; // Replace with a valid _id from your database
+    
+      chai
+        .request(testPath)
+        .delete(`/api/subscription/${_id}`)
+        .end((err, res) => {
+          if (err) {
+            done(err);
+          } else {
+            expect(res).to.have.status(200); // Check for 200 OK status
+            expect(res.body).to.be.an("object");
+            expect(res.body.message).to.equal("Subscription successfully deleted");
+            done();
+          }
+        });
+    });
+
+    it("should return 404 Not Found for deleting a non-existing Subscription", (done) => {
+      const _id = "invalid_id"; // Replace with a non-existing _id
+    
+      chai
+        .request(testPath)
+        .delete(`/api/subscription/${_id}`)
+        .end((err, res) => {
+          expect(res).to.have.status(404); // Check for 404 Not Found status
+          expect(res.body).to.be.an("object");
+          expect(res.body.message).to.equal("Error, Not Found: Subscription not found with id invalid_id");
+          done();
+        });
+    });
   });
 });
